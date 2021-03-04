@@ -123,6 +123,7 @@ int main()
 
 本题考察的是结构体的使用以及排序
 
+```
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
@@ -148,6 +149,8 @@ int main()
     for (i=0;i<n;i++) printf("%s\n",a[i].name);
     return 0;
 }
+
+```
 
 仅供参考。同样的，D题“返航小统计”可以和本题一样使用结构体，只需要加一步计数即可。
 
