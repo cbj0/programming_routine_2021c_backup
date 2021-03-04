@@ -58,7 +58,34 @@
 
 ### I 4185 数列级数
 
-本题查一下OEIS就可以打表。当然，上机与考试时禁止查OEIS。[OEIS:A002387](http://oeis.org/A002387)
+本题主要考察循环以及数据类型之间的转换，以下为标程
+
+```C
+#include <stdio.h>
+int main(void)
+{
+    int q, m, k;
+    double sum = 1.0;
+
+    scanf("%d", &q);
+    while (q--)
+    {
+        sum = 1.0, m = 1;
+        scanf("%d", &k);
+        
+        while (sum <= k)
+        {
+            m++;
+            sum += 1.0 / m;
+        }
+        printf("%d\n", m);
+    }
+
+    return 0;
+}
+```
+
+另外，本题查一下OEIS就可以打表。当然，上机与考试时禁止查OEIS。[OEIS:A002387](http://oeis.org/A002387)
 
 如果打表的话，例如写成这样：
 
