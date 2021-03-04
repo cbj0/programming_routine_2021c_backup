@@ -121,6 +121,36 @@ int main()
 
 ### L 4183 女神的生日
 
+本题考察的是结构体的使用以及排序
+
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+struct sb{
+    char name[24];
+    int y,m,d;
+}a[120],b[1];//b数值用来交换
+int main()
+{
+    int i,j,n,m,k;
+    scanf("%d",&n);
+    for (i=0;i<n;i++) scanf("%s %d %d %d",a[i].name,&a[i].y,&a[i].m,&a[i].d);
+    for (i=0;i<n-1;i++)
+         for (j=i+1;j<n;j++)
+         {
+             if ((a[i].y>a[j].y) || (a[i].y==a[j].y && a[i].m>a[j].m) || (a[i].y==a[j].y && a[i].m==a[j].m && a[i].d>=a[j].d))    //岁数大就交换到前面去，注意是a[i].d>=a[j].d而不是a[i].d>a[j].d，因为题目上说年龄相等，后输入的先输出
+            {
+                b[0]=a[i];
+                a[i]=a[j];
+                a[j]=b[0];//交换
+            }
+        }
+    for (i=0;i<n;i++) printf("%s\n",a[i].name);
+    return 0;
+}
+
+仅供参考。同样的，D题“返航小统计”可以和本题一样使用结构体，只需要加一步计数即可。
+
 ### M 4192 正反相加
 
 ### N 4193 真•简单的a+b
