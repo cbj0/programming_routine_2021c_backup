@@ -155,7 +155,52 @@ int main()
 仅供参考。同样的，D题“返航小统计”可以和本题一样使用结构体，只需要加一步计数即可。
 
 ### M 4192 正反相加
+## 题目分析
 
+这道题不需要复杂的数学操作，只考查了字符串相关函数的简单使用，其中反读数需要将字符串倒置，可以自行编写函数来操作，然后逐个位数相加进位即可。需要注意的是，输入的数字不超过100位并不意味着相加的结果不超过100位。用字符串模拟高精度数加法的思想在后续题目中也会有所体现。
+
+## 示例代码
+
+```
+#include <stdio.h>
+#include <string.h>
+
+char ch1[101]={};
+char ch2[101]={};
+char ch3[102]={};					 //三个全局变量，ch1为读入数，ch2为倒置，ch3为计算结果
+
+void reverse(void)						//将ch1倒置的函数
+{
+	int len = strlen(ch1);
+	int i;
+	for(i = 0;i < len;i++)
+		ch2[i] = ch1[len-1-i];
+}
+int main()
+{
+	int i,add = 0;
+	
+	gets(ch1);
+	
+	int len = strlen(ch1);
+	reverse();
+	for(i = len-1;i >= 0;i--){
+		if(ch1[i]+ch2[i]+add-2*'0'>=10)			//这里的分情况讨论是为了进位
+			ch3[len-1-i] = ch1[i]+ch2[i]+add-'0'-10,add = 1;
+		else
+			ch3[len-1-i] = ch1[i]+ch2[i]+add-'0',add = 0;
+	}
+	if(add)
+		ch3[len] = '1';				//如果最后一位可以进位上来，那么位数增加，最高位为1
+	
+	int len2 = strlen(ch3);
+	
+	for(i=len2-1;i>=0;i--)
+		printf("%c",ch3[i]);		//倒序相加再倒序打印，可以方便最后一位的进位
+		
+	return 0;
+}
+```
 ### N 4193 真•简单的a+b
 
 
