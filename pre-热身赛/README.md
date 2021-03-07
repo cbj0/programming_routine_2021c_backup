@@ -148,6 +148,27 @@ int main()
 
 ### J 4188 数数入门
 
+本题注意数据范围进行枚举即可
+
+```
+#include <stdio.h>  
+int a[10];
+int main()
+{
+	int m,n;
+	int i;
+	scanf("%d %d",&m,&n);
+	if(m==0)
+		a[0]++;
+	for(;m<=n;m++)
+		for(i=m;i;i/=10)
+			a[i%10]++;
+	for(i=0;i<=9;i++)
+		printf("%d ",a[i]);
+	return 0;
+} 
+```
+
 ### K 4195 cbj学数学分析
 
 思路:把n个数读入数组并用qsort排序,取前面m个取平均.
