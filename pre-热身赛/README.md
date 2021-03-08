@@ -150,7 +150,7 @@ int main()
 
 本题注意数据范围进行枚举即可
 
-```
+```C
 #include <stdio.h>  
 int a[10];
 int main()
@@ -371,9 +371,199 @@ C语言的qsort函数，就是简单的**快速排序算法**，具体的算法�
 
 在有eps的情况下，检查左右游标所在的值，距离是否超过eps，即区间的两个端点涵盖的取值范围是否超过eps。
 
-#### 具体代码
+#### 标程代码
 
-具体代码等到比赛结束，或者有人做出来之后，再放出来吧。
+如果你写了很长时间，还没有通过，可以参考下面的做法，对比对比与自己的算法流程有什么不同，深入思考，然后调试自己的代码。
+
+希望同学们，在学会C语言的基础上，也能掌握规范整齐的代码书写方法，以及养成勤于思考的习惯。
+
+```C
+
+#include<stdio.h>
+#include<stdlib.h>
+#include<math.h>
+
+int comp(const void *p1,const void *p2)/*qsort比较函数，不要忘记相等时返回0*/
+{
+    double *a=(double*)p1;
+    double *b=(double*)p2;
+    if(*a<*b)
+    {
+        return 1;
+    }
+    else if(*a>*b)
+    {
+        return -1;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+int X[2005],Y[2005];/*初始点集*/
+
+int Cross(int lhs,int rhs)/*叉乘*/
+{
+    return X[lhs]*Y[rhs]-X[rhs]*Y[lhs];
+}
+
+int Dis2(int lhs,int rhs)/*距离平方*/
+{
+    int dx=X[lhs]-X[rhs],dy=Y[lhs]-Y[rhs];
+    return dx*dx+dy*dy;
+}
+
+double GetCos(int i,int j)/*计算夹角余弦*/
+{
+    int a2=Dis2(0,i),b2=Dis2(i,j),c2=Dis2(0,j);
+    return (double)(b2+c2-a2)/((double)2*sqrt(b2)*sqrt(c2));
+}
+
+double Cos[2005];/*夹角余弦*/
+
+int main()
+{
+    int n;
+    scanf("%d",&n);
+    int i;
+    for(i=1;i<=n;i++)
+    {
+        scanf("%d%d",X+i,Y+i);
+    }
+    int ans=1;
+    for(i=1;i<=n;i++)
+    {
+        int cnt=0;
+        int j;
+        for(j=1;j<=n;j++)
+        {
+            if(Cross(i,j)>0)/*夹角可以有两个朝向，可以将一半的朝向舍去*/
+            {
+                Cos[++cnt]=GetCos(i,j);
+            }
+        }
+        qsort(Cos+1,cnt,sizeof(double),comp);
+        int l,r;
+        for(l=1;l<=cnt;)/*这个循环很巧妙，请仔细思考它的原理*/
+        {
+            r=l;
+            while(Cos[l]-Cos[r]<1e-14&&Cos[r]-Cos[l]<1e-14&&r<=cnt)
+            {
+                r++;
+            }
+            ans=ans>(r-l+1)?ans:(r-l+1);
+            l=r;
+        }
+    }
+    printf("%d\n",ans);
+    return 0;
+}
+
+```
+
+#### 另一种解法
+
+另一种解法，使用反演变换的方法也能解出来。仅有细节不同，大体流程与标程解法大致相同。这种方法超出了本课范围，不必掌握，仅知道还有更多更厉害的解法即可。
+
+```C
+
+#include<stdio.h>
+#include<stdlib.h>
+#include<float.h>
+
+int comp(const void *p1,const void *p2)
+{
+	double *a=(double*)p1;
+	double *b=(double*)p2;
+	if(*a<*b)
+	{
+		return 1;
+	}
+	else if(*a>*b)
+	{
+		return -1;
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+struct poi
+{
+	double first;
+	double second;
+};
+
+struct poi points[10010];
+int topp;
+
+double m[10010];
+int topm;
+
+int maxPoints()
+{
+	int res=1;
+	int i;
+	for(i=0; i<topp; ++i)
+	{
+		topm=0;
+		int j;
+		for(j=i+1; j<topp; ++j)
+		{
+			if(points[j].first*points[i].second==points[i].first*points[j].second)
+			{
+				continue;
+			}
+			double dx=points[j].first-points[i].first;
+			double dy=points[j].second-points[i].second;
+			if(dy!=0)
+			{
+				m[topm]=dx/dy;
+			}
+			else
+			{
+				m[topm]=DBL_MAX;
+			}
+			topm++;
+		}
+		qsort(m,topm,sizeof(double),comp);
+		int l,r;
+		for(l=0; l<topm;)
+		{
+			r=l;
+			while(m[l]-m[r]<1e-14&&m[r]-m[l]<1e-14&&r<topm)
+			{
+				r++;
+			}
+			res=res>(r-l+1)?res:(r-l+1);
+			l=r;
+		}
+	}
+	return res;
+}
+
+int main()
+{
+	int n;
+	scanf("%d",&n);
+	double x,y;
+	while(n--)
+	{
+		scanf("%lf%lf",&x,&y);
+		double temp=x*x+y*y;
+		struct poi pp;
+		pp.first=x/temp;
+		pp.second=y/temp;
+		points[topp]=pp;
+		topp++;
+	}
+	printf("%d\n",maxPoints());
+	return 0;
+}
+
+```
 
 ### P 4184 YourSQL2.0
 
@@ -398,7 +588,7 @@ C语言的qsort函数，就是简单的**快速排序算法**，具体的算法�
 
 那么实际上题目中分析的整个过程就是从还有n个球没抽到到还有0个球没抽到，一步步递推的过程。
 
-答案显而易见，就是 n/n + n/(n-1) + ... + n/1 = n(1 + 1/2 + ... + 1/n)
+答案显而易见，就是 $\frac{n}{n} + \frac{n}{n-1} + ... + \frac{n}{1} = n\left(1 + \frac{1}{2} + ... + \frac{1}{n}\right)$
 
 在计算出了答案之后，后面的一切都变得简单了。我们只需要通过模拟分数的加法和约分来完成问题，在这里需要注意的是约分的时候采用除以一定量的质数或者直接求最大公约数，以及在处理的过程中是否会出现爆精度的问题（虽然预期是需要搞到long long就够了，从提交结果来看，采用更加暴力的做法的话甚至可能需要用到int128，这超出了本课程要求的范围，且本地不太好调试）。
 
