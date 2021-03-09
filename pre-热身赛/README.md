@@ -422,6 +422,39 @@ int main()
 ```
 ### N 4193 真•简单的a+b
 
+#### 题目分析
+
+本题考查基础知识，虽然可以用奇奇怪怪的东西用极短的代码量解决掉。但是属于旁门左道，并不提倡。
+
+a，b虽然在long long范围内，但是a+b就不一定了，比如a，b均为正数，a+b就有可能超过LLONG_MAX导致溢出 于是会输出一个负数。对应本题的第五组到第九组数据，都是会爆掉long long范围的，于是在这种情况下我们可以考虑用unsigned long long，首先对于一正一负，必然不会爆long long的范围，所以我们照常输出a+b即可，两个都是正数的话，因为LLONG_MAX的最大值是2^63-1 两个正数相加最大值是2^64-2 而unsigned long long的最大值是2^64-1，完全不用担心溢出的问题 于是我们输出unsigned long long的a+b即可
+对于一般的两个负数 我们取aa=-a bb=-b 然后输出unsigned long long的-(aa+bb)即可 但是当a==LLONG_MIN且b==LLONG_MIN（LLONG_MIN是-2^63）时（最后一组数据），unsigned long long正好存不下 于是导致了输出错误，于是我们需要对这种情况进行特判 其余的取负正常输出即可
+这里需要注意的是最后一种情况尽管a或者b有可能会取LLONG_MIN 而导致取相反数还是LLONG_MIN，但是强制类型转换变成unsigned long long并不影响还是相当于直接取相反数。
+```
+#include <stdio.h>
+int main(){
+	long long int a,b;
+	scanf("%lld %lld",&a,&b);
+	if(a>=0&&b>=0){
+		unsigned long long int sum=a+b;//a+b可能超过long long最大值 故用必正的unsigned long long
+		printf("%llu\n",sum);
+	}
+	else if(((a>0&&b<=0))||((a<=0)&&(b>0))){
+		long long int sum=a+b;//因为一正一非正 故相加不会超过long long范围正常输出即可
+		printf("%lld\n",sum);
+	}
+	else if(a==-9223372036854775808ll&&b==-9223372036854775808ll){
+		printf("-18446744073709551616\n");//特判 理由见上
+	}
+	else if(a<=0&&b<=0){//因为特殊情况已经在上面被讨论 故剩下的可以放开手脚取相反数相加
+		a=-a,b=-b;
+		unsigned long long int sum=a+b;
+		printf("-%llu\n",sum);
+	}
+	return 0;
+}
+```
+
+
 ### O 4190 忍蛙的圆形轨迹
 
 #### 题目分析
