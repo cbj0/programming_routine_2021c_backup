@@ -50,6 +50,60 @@
 
 ### E 4194 PHP是最好的语言
 
+#### 题目分析
+
+本题没有给出最大输入的数据数量，因此想要完整保存所有数据是不现实的，最好的办法是边读入边计票（大概类似于唱票），示例程序没有使用结构体，感兴趣的同学可以自行了解结构体的用法。
+
+#### 示例代码
+
+```c
+#include<stdio.h>
+#include<string.h>
+int main()
+{
+	char lan[25][25]={'\0'};
+	char temp[25]={'\0'};
+	int count[25]={0},i=0,j,max=0;
+	while(scanf("%s",temp)!=EOF)
+	{
+		if(i==0)
+		{
+			strcpy(lan[0],temp);
+			count[0]++; 
+			i++;
+		}
+		else
+		{
+			int flag=0;
+			for(j=0;j<i;j++)
+			{
+				if(strcmp(lan[j],temp)==0)
+				{
+					count[j]++;
+					flag=1;
+					break;
+				}
+			}
+			if(flag==0)
+			{
+				strcpy(lan[i],temp);
+				count[i]=1;
+				i++;
+			}
+		}
+	}
+	for(j=0;j<i;j++)
+	{
+		if(count[j]>max) max=count[j];
+	}
+	for(j=0;j<i;j++)
+	{
+		if(count[j]==max) printf("%s\n",lan[j]);
+	}
+	return 0;
+}
+```
+
 ### F 4197 单节得分王
 
 #### 题目分析
