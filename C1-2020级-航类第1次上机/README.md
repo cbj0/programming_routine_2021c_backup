@@ -195,6 +195,7 @@ int main() {
         sum_point += credit;
     }
     printf("%.2f\n", sum_grade / sum_point);
+    return 0;
 }
 ```
 
