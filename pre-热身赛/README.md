@@ -46,6 +46,50 @@
 
 ### C 4189 阿瓦隆卡牌
 
+本题是一个比较简单的练习输入输出以及逻辑关系的题目
+
+基本思路就是先判断前五个字符中`'W'`的个数，并判断第六个字符的内容
+
+本题中由两个条件：成功完成3个及以上的任务、成功隐藏先知的身份
+
+两个条件进行与运算后的结果即为正方阵营的获胜情况
+
+两个条件的对立条件进行或运算的结果即为反方阵营的获胜情况
+
+可知两个阵营的获胜为对立条件
+
+即可简单地仅判断某一方阵营的胜负来得到另一方阵营的胜负情况
+
+```c
+#include<stdio.h>
+
+int main(){
+    char TheMerlinFinded=0; //标示先知是否被发现
+    int SuccessTaskNum=0; // 任务成功数量计数变量
+    for(int i=0;i<5;){
+        char Task=0;
+        Task=getchar();
+        if(Task=='W' || Task=='L'){
+        /*---------过滤空格等无效字符---------*/
+            i++;
+        }
+        if(Task=='W'){
+            SuccessTaskNum++;
+        }
+    }
+    getchar();
+    TheMerlinFinded=getchar();
+    printf("%d\n",SuccessTaskNum);
+    if(SuccessTaskNum>=3 && TheMerlinFinded=='H'){// 通过与关系，判定好人方是否获胜
+        printf("King Arthur Win");
+    }else{
+        printf("Medrawt Win");
+    }
+
+    return 0;
+}
+```
+
 ### D 4182 返航小统计
 
 ### E 4194 PHP是最好的语言
