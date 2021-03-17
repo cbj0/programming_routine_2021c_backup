@@ -36,13 +36,49 @@
 
 ### A 4191 helloworld
 
-签到题。略。
+签到题。
+
+```c
+#include<stdio.h>
+
+int main(){
+    printf("helloworld");
+    return 0;
+}
+```
 
 ### B 4187 佛像
 
 本题考察字符画输出。这是历年考试必考的内容，必会必过，上机时请自行锻炼找BUG。
 
 只需要转义反斜杠以及双引号即可通过。
+
+```c
+#include <stdio.h>
+int main()
+{
+    printf("                      _ooOoo_\n");
+    printf("                     o8888888o\n");
+    printf("                     88\" . \"88\n");
+    printf("                     (| -_- |)\n");
+    printf("                      O\\ = /O\n");
+    printf("                  ____/'---'\\____\n");
+    printf("                   .\' \\\\| |// \'.\n");
+    printf("                 / \\\\||| : |||// \\\n");
+    printf("               / _||||| -:- |||||- \\\n");
+    printf("                 | | \\\\\\ - /// | |\n");
+    printf("                | \\_| \'\'\\---/\'\' |_/\n");
+    printf("                \\ .-\\__ `-` ___/-. /\n");
+    printf("              ___`. .\' /--.--\\ `. . __\n");
+    printf("           .\"\" \'< `.___\\_<|>_/___.\' >\'\"\".\n");
+    printf("         | | : `- \\`.;`\\ _ /`;.`/ - ` : | |\n");
+    printf("           \\ \\ `-. \\_ __\\ /__ _/ .-` / /\n");
+    printf("   ======`-.____`-.___\\_____/___.-`____.-'======\n");
+    printf("                      `=---=\'\n");
+    return 0;
+}
+```
+
 
 ### C 4189 阿瓦隆卡牌
 
@@ -91,6 +127,25 @@ int main(){
 ```
 
 ### D 4182 返航小统计
+
+```c
+#include<stdio.h>
+
+int main(){
+    int n,id,day,hour,min,aimday,count=0;
+    scanf("%d",&aimday);
+    scanf("%d",&n);
+    int i;
+    for(i=0;i<n;i++){
+    	scanf("%d%d%d:%d",&id,&day,&hour,&min);
+    	if(day==aimday){
+    		printf("%d %02d:%02d\n",id,hour,min);
+    		count++;
+		}
+	}
+	printf("%d",count);
+}
+```
 
 ### E 4194 PHP是最好的语言
 
@@ -236,6 +291,27 @@ int main()
 ```
 
 ### G 4196 刀客塔的烦恼
+
+```c
+#include <stdio.h>
+
+int main() {
+    int level, exp, money;//定义变量
+    scanf("%d %d %d", &level, &exp, &money);//输入等级、作战记录、钱 数
+    int level_need = 80 - level;//距离满级所差的等级数
+    int exp_need = level_need * 10; //计算升到满级需要的作战记录数
+    int money_need = level_need * 1000; //计算升到满级需要的钱数
+    if (exp_need <= exp && money_need <= money) { //如果两者都够，输出YES
+        printf("YES %d %d", exp_need, money_need);
+    } else if (exp_need <= exp && money_need > money) { //如果作战记录足够，但钱不够
+        printf("NO 0 %d", money_need - money);
+    } else if (exp_need > exp && money_need <= money) { //如果钱足够，但作战记录不够
+        printf("NO %d 0", exp_need - exp);
+    } else { //如果两者都不够
+            printf("NO %d %d", exp_need - exp, money_need - money);
+    }
+}
+```
 
 ### H 4199 二进制逆序
 
@@ -840,7 +916,171 @@ int main()
 
 刚接触C语言的同学做不出来很正常，但是在整个课程学完之后，感兴趣的同学可以回过头来做一下这题，当做一种复习。
 
-标程将在比赛结束后放出。或许可以期待YourSQL3.0（
+标程如下。或许可以期待YourSQL3.0（
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#define ROWNUM 1007
+#define COLNUM 107
+#define LEN 107
+#define INT 0
+#define REAL 1
+#define VARCHAR 2
+#define DATE 3
+int type[COLNUM], wide[COLNUM], sp[COLNUM][2], row, col, n;
+char title[COLNUM][LEN], typeString[LEN];
+typedef struct table
+{
+    union attr
+    {
+        char varchar[LEN];
+        double real;
+        int date;
+        int intNum;
+    } A;
+    char rawData[LEN];
+    int length;
+} T;
+T t[ROWNUM][COLNUM];
+
+void readTable()
+{
+    
+    int i, j, y, m, d;
+    scanf("%d %d", &row, &col);
+    for (i = 0; i < col; i++)
+    {
+        scanf("%s", title[i]);
+        if (strlen(title[i]) > wide[i])
+            wide[i] = (int)strlen(title[i]);
+    }
+    for (i = 0; i < col; i++)
+    {
+        scanf("%s", typeString);
+        if (strcmp(typeString, "INT") == 0)
+            type[i] = INT;
+        else if (strcmp(typeString, "REAL") == 0)
+            type[i] = REAL;
+        else if (strcmp(typeString, "VARCHAR") == 0)
+            type[i] = VARCHAR;
+        else
+            type[i] = DATE;
+    }
+    for (i = 0; i < row; i++)
+        for (j = 0; j < col; j++)
+        {
+            scanf("%s", t[i][j].rawData);
+            t[i][j].length = (int)strlen(t[i][j].rawData);
+            if (t[i][j].length > wide[j])
+                wide[j] = t[i][j].length;
+            switch (type[j])
+            {
+                case INT:
+                    sscanf(t[i][j].rawData, "%d", &t[i][j].A.intNum);
+                    break;
+                case REAL:
+                    sscanf(t[i][j].rawData, "%lf", &t[i][j].A.real);
+                    break;
+                case VARCHAR:
+                    sscanf(t[i][j].rawData, "%s", t[i][j].A.varchar);
+                    break;
+                case DATE:
+                    sscanf(t[i][j].rawData, "%d-%d-%d", &y, &m, &d);
+                    t[i][j].A.date = d + m * 100 + y * 10000;
+                default:
+                    break;
+            }
+        }
+}
+
+void readSP()
+{
+    int i;
+    char colName[LEN];
+    while (~scanf("%s %d", colName, &sp[n][1]))
+    {
+        for (i = 0; i < col; i++)
+            if (strcmp(colName, title[i]) == 0)
+            {
+                sp[n][0] = i;
+                break;
+            }
+        n++;
+    }
+}
+
+int cmp(const void *a, const void *b)
+{
+    T *t1 = (T *)a, *t2 = (T *)b;
+    int i, c, sgn, ret = 0;
+    for (i = 0; i < n; i++)
+    {
+        c = sp[i][0];
+        sgn = sp[i][1];
+        switch (type[c])
+        {
+            case VARCHAR:
+                ret = sgn * strcmp(t1[c].A.varchar, t2[c].A.varchar);
+                break;
+            case INT:
+                ret = sgn * (t1[c].A.intNum - t2[c].A.intNum);
+                break;
+            case REAL:
+                if (t1[c].A.real - t2[c].A.real > 0)
+                    ret = sgn * 1;
+                else if (t1[c].A.real - t2[c].A.real < 0)
+                    ret = sgn * -1;
+                else
+                    ret = 0;
+                break;
+            case DATE:
+                ret = sgn * (t1[c].A.date - t2[c].A.date);
+            default:
+                break;
+        }
+        if (ret != 0)
+            return ret;
+    }
+    return 0;
+}
+
+void printTable()
+{
+    char format[LEN];
+    int i, j;
+    putchar('|');
+    for (j = 0; j < col; j++)
+    {
+        sprintf(format, "%%%ds", wide[j]);
+        printf(format, title[j]);
+        putchar('|');
+    }
+    putchar('\n');
+    for (i = 0; i < row; i++)
+    {
+        putchar('|');
+        for (j = 0; j < col; j++)
+        {
+            sprintf(format, "%%%ds", wide[j]);
+            printf(format, t[i][j].rawData);
+            putchar('|');
+        }
+        putchar('\n');
+    }
+}
+
+int main(int argc, const char * argv[])
+{
+    readTable();
+    readSP();
+    qsort(t, row, sizeof(*t), cmp);
+    printTable();
+    return 0;
+}
+```
+
 
 ### Q 4198 基础物理实验 2（简单版）
 
