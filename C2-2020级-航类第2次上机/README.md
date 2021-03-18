@@ -1,3 +1,7 @@
+# C2-2020级-航类第2次上机
+
+一篇鼓励学生们的鸡汤文学：https://www.bilibili.com/read/cv10351939
+
 # <center>A. test a xor b</center>
 
 <center>时间限制：1000ms  内存限制：65536kb</center>
