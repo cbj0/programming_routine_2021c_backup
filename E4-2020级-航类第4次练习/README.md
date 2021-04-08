@@ -304,6 +304,8 @@ int main() {
 
 本题可以通过先输入字符串之后，优先比较数组长度，如果长度相同，再从高到低比较每一位，直到出现不一致为止。
 
+**致歉:本次由于出题人一开始造数据的疏忽，导致最后放hack数据的时间较晚，且最后的几组出现了`\r`的问题，从下次之后助教们后注意这一点，在避免出现`\r`的同时，也提醒大家考虑到`\r`可能会带来的问题。**
+
 ```c
 #include<stdio.h>
 #include<string.h>
@@ -311,7 +313,7 @@ int main() {
 char first[10010], second[10010], third[10010], tmp[10010];
 int n;
 
-int bigger(char *a, char *b) {
+int bigger(char a[], char b[]) {
     int lena = strlen(a), lenb = strlen(b);
     if (lena != lenb) return lena > lenb;//如果a的位数比b的位数大，那a一定比b大
     //如果位数一致，直接从高到低比较 
