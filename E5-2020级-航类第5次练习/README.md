@@ -665,4 +665,75 @@ int main() {
 	for(i=1;i<=m;i++){
 		shu[i]=shu[i-1]<<1;//保存二的方幂 
 	}
+	int tmp=shu[m],maxv=0;//tmp就是前面所说的二进制数的总数 
+	for(i=1;i<tmp;i++){
+		memset(tmpp,0,sizeof(tmpp));//别忘清空数组 手动清除为0也可以 
+		int cnt=0;
+		for(j=1;j<=m;j++){
+			if(shu[j-1]&i){//这一位为1则代表选择这位女神 
+				cnt++;//选择女神数+1 
+				for(k=1;k<=n;k++){
+					tmpp[k]+=a[j][k];//将需要的礼物加起来 
+				}
+			}
+		}
+		int flag=0;
+		for(j=1;j<=n;j++){
+			if(tmpp[j]>h[j]){//大于的话说明礼物不够 
+				flag=1;
+				break;
+			}
+		}
+		if(!flag){//礼物都够 
+			if(cnt>maxv){
+				maxv=cnt;//大于答案则更新 
+			}
+		}
+	}
+	printf("%d",maxv);
+	return 0;
+}
+```
+另一种解法 也是让我欣喜的是 很多同学用到了之前所学的递归 学以致用 点赞！
+```c
+#include <stdio.h>
+int n,m,ngift[25][25],hgift[25],ans,tmpgift[25],vis[25];
+void dfs(int step,int total){//step是到了第几个人 total是选择了几个人
+	if(step==m+1){//递归到了终点也就是最后一个人也结束了
+		if(total>ans) ans=total;//大于总数 更新答案并返回
+		return;
+	}
+	int i,flag=0;
+	for(i=1;i<=n;i++){
+		if(tmpgift[i]+ngift[step][i]>hgift[i]){//已经大于了 没有进行的必要了
+			flag=1;
+			break;
+		}
+	}
+	if(!flag){//不大于 可以选
+		for(i=1;i<=n;i++){
+			tmpgift[i]+=ngift[step][i];//将已经消耗的礼物更新
+		}
+		dfs(step+1,total+1);//到下一个人 并且选择了这个人
+		for(i=1;i<=n;i++){
+			tmpgift[i]-=ngift[step][i];//递归回来 要减下去表示不选了
+		}
+	}
+	dfs(step+1,total);//递归到下一个人 并且不选这个人
+}
+int main(){ 
+	scanf("%d %d",&m,&n);
+	int i,j;
+	for(i=1;i<=m;i++){
+		for(j=1;j<=n;j++){
+			scanf("%d",&ngift[i][j]);
+		}
+	}
+	for(i=1;i<=n;i++){
+		scanf("%d",&hgift[i]);
+	}
+	dfs(1,0);
+	printf("%d",ans);
+	return 0;
+}
 ```
