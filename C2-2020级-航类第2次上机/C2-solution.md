@@ -170,7 +170,7 @@ int main(){
 int stus[1000050] = {0};
 int main()
 {
-	int n, tmp, max = -1, i;
+	int n, tmp, max = 0, i;
 	scanf("%d", &n);
 	while (~scanf("%d", &tmp))
 	{
