@@ -61,7 +61,7 @@ $$
 #include <stdlib.h>
 #include <string.h>
 #define MOD 1000007
-define ll long long;
+#define ll long long
 ll a,b;
 ll pow1(ll m,ll n)
 {
