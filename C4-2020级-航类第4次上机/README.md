@@ -117,32 +117,35 @@ int isPrime(int n)
 ```c
 #include<stdio.h>
 
-void hanoi(int n, char a, char b, char c);
-// 把n个盘子从柱子 a 通过 b 挪到 c 上
-void move(int n, char a, char c); // 把第n号盘子从柱子a挪到c上
+void hanoi(int n, char a, char b, char c);
+// 把n个盘子从柱子 a 通过 b 挪到 c 上
+void move(int n, char a, char c); // 把第n号盘子从柱子a挪到c上
 
-int main()
+int main()
 {
-    int num;
-    char a, b, c;
-    scanf("%d %c %c %c",&num,&a,&b,&c);
-    hanoi(num, a, b, c);
-    return 0;
+    int num;
+    char a, b, c;
+
+    // freopen("out2.txt","w",stdout);
+
+    scanf("%d %c %c %c",&num,&a,&b,&c);
+    hanoi(num, a, b, c);
+    return 0;
 }
-void move(int n, char from, char to)
+void move(int n, char from, char to)
 {
-    printf("move %d from %c to %c\n", n, from, to);
+    printf("move %d from %c to %c\n", n, from, to);
 }
-void hanoi(int n, char from, char via, char to)
+void hanoi(int n, char from, char via, char to)
 {
-    if (n == 1)
-    {
-        move(n, from, to);
-        return;
-    }
-    hanoi(n - 1, from, to, via); // 把n-1个盘子从from通过
-    move(n, from, to);
-    hanoi(n - 1, via, from, to);
+    if (n == 1)
+    {
+        move(n, from, to);
+        return;
+    }
+    hanoi(n - 1, from, to, via); // 把n-1个盘子从from通过
+    move(n, from, to);
+    hanoi(n - 1, via, from, to);
 }
 ```
 
