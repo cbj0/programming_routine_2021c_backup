@@ -362,7 +362,7 @@ long long Det(long long n)
 		{
 			A[k][j]=A[k][j]*FastPower(A[k][k],998244351)%998244353;
 		}
-		det=det*A[k][k]%998244353;
+		det=(det*A[k][k]%998244353+998244353)%998244353;
 		A[k][k]=1;
 		for(i=0; i<n; i++)
 		{
