@@ -108,13 +108,20 @@ E4-C题，为什么数组越界会导致OE？
 
 | 助教姓名 | 助教昵称           |
 |-----|---------------|
-| 张京泽 | Jingze Zhang  |
-| 杜晨鸿| duchenhong|
+| 张京泽 | Jingze Zhang |
+| 杜晨鸿 | duchenhong |
 | 张岑岳 | GoatGirl98 |
-| 曹北健| cbj|
+| 曹北健 | cbj |
 | 李淳一 | Great-designer |
 | 荆煦添 | Xutian-Jing |
 | 陈博胆 | Bodan Chen |
 | 鲁文澔 | ssd |
 | 蒋知达 | JJJ |
 | 李日乾 | lucienlrq |
+| 校怡哲 | xiaoyizhe |
+| 孟亚鹏 | mengyapeng |
+| 雒子清 | 史上最强的星际二选手 |
+| 吴启航 | 吴启航 |
+| 梁健富 | 梁健富 |
+| 王智彪 | 王智彪 |
+| 朱俊达 | 朱俊达 |
