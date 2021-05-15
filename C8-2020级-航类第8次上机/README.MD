@@ -49,18 +49,18 @@
 ```c
 #include<stdio.h>
 
-int main()
+int main()
 {
-    int n;
-    double a, b, c, p,ans;
-    scanf("%d", &n);
-    for (int i = 0; i < n;i++)
-    {
-        scanf("%lf%lf%lf", &a, &b, &c);
-        p = (a + b + c) / 2;
-        ans = p * (p - a) * (p - b) * (p - c);
-        printf("%.1f\n", ans);
-    }
+    int n;
+    double a, b, c, p,ans;
+    scanf("%d", &n);
+    for (int i = 0; i < n;i++)
+    {
+        scanf("%lf%lf%lf", &a, &b, &c);
+        p = (a + b + c) / 2;
+        ans = p * (p - a) * (p - b) * (p - c);
+        printf("%.1f\n", ans);
+    }
 }
 ```
 
@@ -215,28 +215,28 @@ int main()
 ```c
 #include<stdio.h>
 
-int main()
+int main()
 {
-    int n, m, x, y,a[310][310]={},x1,y1,x2,y2,xi,yi,b[310][310];
-    scanf("%d%d%d%d", &n, &m, &x, &y);
-    for (int k = 1; k <= x;k++)
-    {
-        scanf("%d%d%d%d", &x1, &y1, &x2, &y2);
-        for (int i = x1; i <= x2;i++)
-            for (int j = y1; j <= y2;j++)
-            {
-                a[i][j]++;
-                b[i][j] = k;
-            }
-    }
-    while(y--)
-    {
-        scanf("%d%d", &xi, &yi);
-        if(a[xi][yi]>0)
-            printf("Y %d %d\n", a[xi][yi], b[xi][yi]);
-        else
-            printf("N\n");
-    }
+    int n, m, x, y,a[310][310]={},x1,y1,x2,y2,xi,yi,b[310][310];
+    scanf("%d%d%d%d", &n, &m, &x, &y);
+    for (int k = 1; k <= x;k++)
+    {
+        scanf("%d%d%d%d", &x1, &y1, &x2, &y2);
+        for (int i = x1; i <= x2;i++)
+            for (int j = y1; j <= y2;j++)
+            {
+                a[i][j]++;
+                b[i][j] = k;
+            }
+    }
+    while(y--)
+    {
+        scanf("%d%d", &xi, &yi);
+        if(a[xi][yi]>0)
+            printf("Y %d %d\n", a[xi][yi], b[xi][yi]);
+        else
+            printf("N\n");
+    }
 }
 ```
 
