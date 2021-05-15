@@ -1,4 +1,4 @@
-#  *`A ` test a xor b*
+#  `A ` test a xor b
 
 签到题。
 
