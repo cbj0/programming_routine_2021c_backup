@@ -633,7 +633,7 @@ int main(int argc,char **argv){
 
 需要注意每一位对应的都有上限 $up$（即输入的数，如果当前位的上一位并非是输入的数，则本位上限可以到9）
 
-那么往下搜索就有 $dfs(pos, status, limit) = \sum_{i=0}^{up}dfs(pos - 1, status + i % 2 == 1, limit && (i == up))$
+那么往下搜索就有 $dfs(pos, status, limit) = \sum_{i=0}^{up}dfs(pos - 1, status + i \% 2 == 1, limit && (i == up))$
 
 那么我们最一开始要搜索的就是 $dfs(strlen(s) - 1,\ 0,\ 1)$ 往下搜索即可。
 
