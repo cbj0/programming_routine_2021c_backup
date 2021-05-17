@@ -637,7 +637,7 @@ int main(int argc,char **argv){
 
 那么我们最一开始要搜索的就是 $dfs(strlen(s) - 1,\ 0,\ 1)$ 往下搜索即可。
 
-### 示例代码1
+## 示例代码1
 
 ```c
 #include<stdio.h>
