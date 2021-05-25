@@ -105,9 +105,9 @@ int isPrime(int n)
 #### 题目分析
 
 本题是PPT中的原题，解题核心是一个递归函数，将整个搬动过程分为三个部分，以将柱从`from`经过`via`移动到`to`为例：
-1. 将上面n-1个盘子从`from`经由`to`搬动到`via`。
-2. 将最下面的n号盘从`from`搬动到`to`。
-3. 将第一步搬动到`via`的塔经由`from`搬到`to`。
+1. 将上面n-1个盘子从`from`经由`to`搬动到`via`。
+2. 将最下面的n号盘从`from`搬动到`to`。
+3. 将第一步搬动到`via`的塔经由`from`搬到`to`。
 
 本题只要注意输入语句的写法即可,由于柱的标号是一个大写字母，所以使用`%c`输入，使用`char`型变量存储即可，无需使用字符串。
 
@@ -362,11 +362,11 @@ int main()
 ```
 ### G 4269 ZJD学组合数  
 
-## 题目分析
+#### 题目分析
 
 这个题目如果使用阶乘相除的方法会有溢出的问题，题目中已经暗示过要使用杨辉三角，或公式$C_{n}^{m-1}+C_{n}^{m}=C_{n+1}^{m}$，来解决问题。
 
-## 示例代码
+#### 示例代码
 
 1.使用一维滚动数组循环
 
@@ -431,80 +431,80 @@ int main(void) {
 3.质因数分解
 
 ```c
-#include <stdio.h>
+#include <stdio.h>
 
-// 答案这个数中，每个因数有几个如ins[]={0,0,2,1,0,3}表示它有2个2，1个3，3个5等于1500
-int ans[200] = {0};  
+// 答案这个数中，每个因数有几个如ins[]={0,0,2,1,0,3}表示它有2个2，1个3，3个5等于1500
+int ans[200] = {0};  
 
-// 将一个(num)数字分解质因数，放到ans中。如flag为1，表示加上这个质因数，为-1表示减去
-void inNum(int num, int flag)
+// 将一个(num)数字分解质因数，放到ans中。如flag为1，表示加上这个质因数，为-1表示减去
+void inNum(int num, int flag)
 {
-    int in = 2;
-    while (num >= 2)
-    {
-        while (num % in == 0)
-        {
-            ans[in] += flag;
-            num /= in;
-        }
-        in++;
-    }
+    int in = 2;
+    while (num >= 2)
+    {
+        while (num % in == 0)
+        {
+            ans[in] += flag;
+            num /= in;
+        }
+        in++;
+    }
 }
 
-// 求组合数的程序
-unsigned long long fun(int n, int m)
+// 求组合数的程序
+unsigned long long fun(int n, int m)
 {
-    int i, j;
-    unsigned long long res = 1;
-    // 按照组合数计算公式，将n!的所有质因数放到ans中
-    for (i = 2; i <= n; ++i)
-    {
-        inNum(i, 1);
-    }
-    // 除去m!的因子
-    for (i = 2; i <= m; ++i)
-    {
-        inNum(i, -1);
-    }
-    // 除去(n-m)!的因子
-    for (i = n - m; i >= 2; --i)
-    {
-        inNum(i, -1);
-    }
+    int i, j;
+    unsigned long long res = 1;
+    // 按照组合数计算公式，将n!的所有质因数放到ans中
+    for (i = 2; i <= n; ++i)
+    {
+        inNum(i, 1);
+    }
+    // 除去m!的因子
+    for (i = 2; i <= m; ++i)
+    {
+        inNum(i, -1);
+    }
+    // 除去(n-m)!的因子
+    for (i = n - m; i >= 2; --i)
+    {
+        inNum(i, -1);
+    }
 
-    // 将所有因子乘起来，得到答案
-    for (i = 2; i <= n; ++i)
-    {
-        for (j = 0; j < ans[i]; ++j)
-        {
-            res *= i;
-        }
-    }
-    return res;
+    // 将所有因子乘起来，得到答案
+    for (i = 2; i <= n; ++i)
+    {
+        for (j = 0; j < ans[i]; ++j)
+        {
+            res *= i;
+        }
+    }
+    return res;
 }
 
-int main()
+int main()
 {
-    int a, i, j;
-    int n, m;
-    scanf("%d", &a);
-    for (i = 0; i < a; ++i)
-    {
-        scanf("%d %d", &n, &m);
-        // 初始化，也可以用memset函数（在string.h中）
-        for (j = 0; j <= n; ++j)
-        {
-            ans[j] = 0;
-        }
-        if (n < m)
-        {
-            printf("You're kidding me!\n");
-        }
-        else
-        {
-            printf("%llu\n", fun(n, m));
-        }
-    }
+    int a, i, j;
+    int n, m;
+    scanf("%d", &a);
+    for (i = 0; i < a; ++i)
+    {
+        scanf("%d %d", &n, &m);
+        // 初始化，也可以用memset函数（在string.h中）
+        for (j = 0; j <= n; ++j)
+        {
+            ans[j] = 0;
+        }
+        if (n < m)
+        {
+            printf("You're kidding me!\n");
+        }
+        else
+        {
+            printf("%llu\n", fun(n, m));
+        }
+    }
 }
 
 ```
