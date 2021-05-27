@@ -210,7 +210,11 @@ void print(const char* color) {
         char* ptr = pos;//备份
         pos--;
         //必须在字符串范围内 而且还是数字 直接往后找就行
-        while (pos - s >= 0 && isdigit(*pos)) card[cnt++] = *pos, --pos;
+        for(; pos - s >= 0 && isdigit(*pos); --pos)
+        {
+            card[cnt] = *pos;
+            cnt++;
+        }
         start = ptr + 1;
     }
     if (cnt == 0) return;//这个花色的啥都没找着
