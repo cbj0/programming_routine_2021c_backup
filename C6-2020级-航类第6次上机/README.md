@@ -22,7 +22,6 @@
 - G 4383 String.ReplaceAll()
 - H 4385 合成宝石
 
-
 ### A 4391 统计成绩（套娃版）
 
 
@@ -34,29 +33,43 @@
 #include<stdio.h>
 #include<stdlib.h>
 
-int n;
-int a[200005];
+int n;
+int a[200005];
 
-int cmp(const void *a, const void *b){
-    int *c=(int*)a, *d=(int*)b;
-    return *c - *d;
+int cmp(const void *a, const void *b)
+{
+	int *c=(int*)a;
+	int *d=(int*)b;
+	if(*c>*d)
+	{
+		return 1;
+	}
+	else if(*c<*d)
+	{
+		return -1;
+	}
+	else
+	{
+		return 0;
+	}
 }
 
-int main(){
-    int i;
-    
-    scanf("%d", &n);
-    for(i=1; i<=n; ++i)
-        scanf("%d", &a[i]);
-    
-    qsort(a+1, n, sizeof(a[1]), cmp);
-    
-    for(i=1; i<=n; ++i)
-        printf("%d ", a[i]);
-    return 0;
+int main()
+{
+	int i;
+	scanf("%d", &n);
+	for(i=1; i<=n; ++i)
+	{
+		scanf("%d", &a[i]);
+	}
+	qsort(a+1, n, sizeof(a[1]), cmp);
+	for(i=1; i<=n; ++i)
+	{
+		printf("%d ", a[i]);
+	}
+	return 0;
 }
 ```
-
 ### C 4381 五月加急名单
 
 
@@ -79,33 +92,43 @@ int main(){
 ```c
 #include<stdio.h>
 
-int n, m, Ans;
-int a[100005];
+int n, m, Ans;
+int a[100005];
 
-int main(){
-    int i;
-    scanf("%d%d", &n, &m);
-    for(i=1; i<=n; ++i)
-        scanf("%d", &a[i]);
-    
-    if(a[1]+a[2] > m){
-        Ans += a[1]+a[2]-m;
-        if(a[1]+a[2]-m > a[2]){ 
-            a[2] = 0;
-            a[1] = m;
-        }
-        else    a[2] = m-a[1];
-    }
-    for(i=2; i<n; ++i){
-        if(a[i]+a[i+1] <= m)    continue;
-        Ans += a[i]+a[i+1]-m;
-        a[i+1] = m-a[i];
-    }
-    printf("%d", Ans);
-    return 0;
+int main()
+{
+	int i;
+	scanf("%d%d", &n, &m);
+	for(i=1; i<=n; ++i)
+	{
+		scanf("%d", &a[i]);
+	}
+	if(a[1]+a[2] > m)
+	{
+		Ans += a[1]+a[2]-m;
+		if(a[1]+a[2]-m > a[2])
+		{
+			a[2] = 0;
+			a[1] = m;
+		}
+		else
+		{
+			a[2] = m-a[1];
+		}
+	}
+	for(i=2; i<n; ++i)
+	{
+		if(a[i]+a[i+1] <= m)
+		{
+			continue;
+		}
+		Ans += a[i]+a[i+1]-m;
+		a[i+1] = m-a[i];
+	}
+	printf("%d", Ans);
+	return 0;
 }
 ```
-
 ### F 4386 另类合成
 
 
@@ -121,53 +144,59 @@ int main(){
 #### 示例代码
 
 ```c
-#include <ctype.h>
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <ctype.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-// 此函数用来去除字符串结尾的\r
-int TrimEndR(char *base);
-
-char str[3015], old[30], new[30], newstr[3015];
-char laji[5];
-int main()
+// 此函数用来去除字符串结尾的\r
+int TrimEndR(char *base)
 {
-    int n;
-    scanf("%d", &n), gets(laji); // scanf之后记得gets
-    for (int i = 0; i < n; i++)
-    {
-        gets(str), gets(old), gets(new);
-        TrimEndR(str), TrimEndR(old), TrimEndR(new);
-        int strL = strlen(str), oldL = strlen(old), newL = strlen(new), cnt = 0;
-        for (char *p = str; p < str + strL; p += oldL) // 每次找到旧串后将p跳过旧串的长度。
-        {
-            char *n = strstr(p, old);
-            if (n == NULL)
-            {
-                for (; p < str + strL; p++, cnt++)
-                    newstr[cnt] = *p;
-                break;
-            }
-            for (; p < n; p++, cnt++)
-                newstr[cnt] = *p;
-            for (int i = 0; i < newL; i++, cnt++)
-                newstr[cnt] = new[i];
-        }
-        newstr[cnt] = '\0';
-        puts(newstr);
-    }
+	while (base[strlen(base) - 1] == '\r')
+	{
+		base[strlen(base) - 1] = '\0';
+	}
+	return strlen(base);
 }
 
-int TrimEndR(char *base)
+char str[3015], old[30], news[30], newstr[3015];
+char laji[5];
+
+int main()
 {
-    while (base[strlen(base) - 1] == '\r')
-        base[strlen(base) - 1] = '\0';
-    return strlen(base);
+	int n;
+	scanf("%d", &n), gets(laji); // scanf之后记得gets
+	for (int i = 0; i < n; i++)
+	{
+		gets(str), gets(old), gets(news);
+		TrimEndR(str), TrimEndR(old), TrimEndR(news);
+		int strL = strlen(str), oldL = strlen(old), newL = strlen(news), cnt = 0;
+		for (char *p = str; p < str + strL; p += oldL) // 每次找到旧串后将p跳过旧串的长度。
+		{
+			char *n = strstr(p, old);
+			if (n == NULL)
+			{
+				for (; p < str + strL; p++, cnt++)
+				{
+					newstr[cnt] = *p;
+				}
+				break;
+			}
+			for (; p < n; p++, cnt++)
+			{
+				newstr[cnt] = *p;
+			}
+			for (int i = 0; i < newL; i++, cnt++)
+			{
+				newstr[cnt] = news[i];
+			}
+		}
+		newstr[cnt] = '\0';
+		puts(newstr);
+	}
 }
 ```
-
 ### H 4385 合成宝石
 
 #### 题目分析
@@ -179,38 +208,38 @@ int TrimEndR(char *base)
 ```c
 #include<stdio.h>
 
-int bag[2][10]={0};
+int bag[2][10]= {0};
 
-int main()
+int main()
 {
-    int n,m;
-    int a,b;
-    int p,q;
-    int c=0,i;
-    scanf("%d %d",&n,&m);
-    
-    while(n--)
-    {
-        scanf("%d %d",&a,&b);
-        bag[a][b]++;
-    }
-    while(m--)
-    {
-        scanf("%d %d",&p,&q);
-        c=0;
-        for(i=1;i<=q;++i)
-        {
-            c/=3;
-            c+=bag[p][i];
-        }
-        
-        if(c){
-            printf("%%\n");
-        }else{
-            printf("\"\'\n");
-        }
-        
-    }
+	int n,m;
+	int a,b;
+	int p,q;
+	int c=0,i;
+	scanf("%d %d",&n,&m);
+	while(n--)
+	{
+		scanf("%d %d",&a,&b);
+		bag[a][b]++;
+	}
+	while(m--)
+	{
+		scanf("%d %d",&p,&q);
+		c=0;
+		for(i=1; i<=q; ++i)
+		{
+			c/=3;
+			c+=bag[p][i];
+		}
+		if(c)
+		{
+			printf("%%\n");
+		}
+		else
+		{
+			printf("\"\'\n");
+		}
+	}
 }
 ```
 
