@@ -24,7 +24,36 @@
 
 ### A 4391 统计成绩（套娃版）
 
+本题是求平均分以上同学的平均分。
 
+所以要先求平均分。
+
+在求了平均分之后将平均分再与每一个同学的成绩逐一比较，将大于等于平均分的人的成绩再算一次平均即可。
+
+```c
+#include <stdio.h>
+
+int score[1001];
+
+int main() {
+    int n, i, sum = 0, sum1 = 0, cnt = 0;
+    double ave, ave1;
+    scanf("%d", &n);
+    for (i = 0; i < n; i++) {
+        scanf("%d", &score[i]);
+        sum += score[i];
+    }
+    ave = 1.0 * sum / n;
+    for (i = 0; i < n; i++) {
+        if (score[i] >= ave) {
+            sum1 += score[i];
+            cnt++;
+        }
+    }
+    ave1 = 1.0 * sum1 / cnt;
+    printf("%.2lf", ave1);
+}
+```
 
 ### B 4392 出人意料的送分
 一道很基础的快排模板题，没有坑点。
@@ -71,7 +100,58 @@ int main()
 }
 ```
 ### C 4381 五月加急名单
+本题是一道简单的结构体排序题。
 
+在输入结构体之后根据rush成员的大小进行排序，再输出即可。
+
+```c
+#include <stdio.h>
+
+typedef struct list {
+    char name[101];
+    int age;
+    char dst[101];
+    int rush;
+} list;
+
+list rush_list[51];
+
+int main() {
+    int n, p;
+    char lj[5];
+    scanf("%d", &n);
+    gets(lj);
+    for (int i = 0; i < n; ++i) {
+        gets(rush_list[i].name);
+        scanf("%d", &rush_list[i].age);
+        gets(lj);
+        gets(rush_list[i].dst);
+        scanf("%d", &rush_list[i].rush);
+        gets(lj);
+        if (i != n - 1) {
+            gets(lj);
+        }
+    }
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (rush_list[j].rush < rush_list[j + 1].rush) {
+                list temp;
+                temp = rush_list[j];
+                rush_list[j] = rush_list[j + 1];
+                rush_list[j + 1] = temp;
+            }
+        }
+    }
+    for (int i = 0; i < n; ++i) {
+        printf("%s\n", rush_list[i].name);
+        printf("%d\n", rush_list[i].age);
+        printf("%s\n", rush_list[i].dst);
+        printf("%d\n", rush_list[i].rush);
+        if (i != n - 1)
+            printf("\n");
+    }
+}
+```
 
 ### D 4388 合成单向链表
 
