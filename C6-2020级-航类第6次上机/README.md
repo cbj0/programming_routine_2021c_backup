@@ -211,6 +211,47 @@ int main()
 ```
 ### F 4386 另类合成
 
+#### 题目分析
+
+本题是字符串+指针的考察；将字符串new覆盖字符串old可以使用strcpy函数，该函数会将一个字符串复制到，也可以理解为覆盖到一个字符数组，并在最后添加空字符，用法如下
+
+```C
+strcpy(old,new);
+```
+
+如果想要在old的指定位置开始进行覆盖的话，改变strcpy函数中的第一个参数的地址即可，例
+
+```C
+strcpy(old+1,new);//从old[1]开始，用字符串new进行覆盖，并在末尾添加空字符
+```
+
+因此，对于本题我们的写法就可以写成如下
+
+#### 示例代码
+
+```c
+#include <stdio.h>
+#include <string.h>
+#include <assert.h>
+#define MAX_strLEN 10000
+#define MAX_allLEN 100000
+char old[1000000],new[100000];
+int point;
+int main(void)
+{
+
+    scanf("%s",old);
+
+    while(scanf("%s",new)!=EOF)
+    {
+        scanf("%d",&point);
+        strcpy(old+point,new);
+    }
+    puts(old);
+
+    return 0;
+}
+```
 
 
 ### G 4383 String.ReplaceAll()
