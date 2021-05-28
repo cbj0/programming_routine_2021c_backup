@@ -155,6 +155,61 @@ int main() {
 
 ### D 4388 合成单向链表
 
+我们在习惯上，会将链表尾结点的 `next` 赋为 `NULL` ，于是找寻链表尾结点即判断那个结点的 `next == NULL`。
+
+在将结点添加到链表尾部的函数中，我们可以利用寻找链表尾结点的函数，将尾结点找到后插入结点。注意维护尾结点的 `next` 为 `NULL`。
+
+**注意处理 `head` 为 `NULL` 的情况。**
+
+#### 部分示例代码
+
+```c
+/*
+ * 函数作用:  找到head指向的链表的最后一个节点，并返回指向它的指针
+ *
+ * 参数说明:
+ * head:     指向链表头节点的指针。若链表为空，则head为NULL;
+ *
+ * 返回值:    指向链表尾节点的指针。若链表为空，则返回NULL.
+ */
+Node *find_tail_of_link_list(Node *head)
+{
+    if (head == NULL) {
+        return NULL;
+    } else {
+        Node *tail = head;
+        while (tail->next) {
+            tail = tail->next;
+        }
+        return tail;
+    }
+}
+
+/*
+ * 函数作用:    将数据data存入new_node指向的节点，并将这个节点掺入到head指向的链表的尾部
+ *              ，并返回指向链表头节点的指针
+ *
+ * 参数说明:
+ * head:        指向链表头节点的指针。若链表为空，则head为NULL;
+ * new_node:    指向创建好的新节点的指针;
+ * data:        新节点中应该存储的数据.
+ *
+ * 返回值:       指向链表头节点的指针.
+ */
+Node *add_node_to_link_list(Node *head, Node *new_node, int data)
+{
+    new_node->data = data;
+    new_node->next = NULL;
+    Node *tail = find_tail_of_link_list(head);
+    if (tail == NULL) {
+        return new_node;
+    } else {
+        tail->next = new_node;
+        return head;
+    }
+}
+```
+
 
 ### E 4282 吃糖
 
