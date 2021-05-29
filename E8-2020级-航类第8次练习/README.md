@@ -376,6 +376,57 @@ int main()
 
 ### `J` 4425 蒙达鲁克硫斯伯古比奇巴勒城的名册
 
+本题主要考察结构体二重指针的使用。如果被排序的数组是`data`，则每次交换时会有1000多个字节被交换，但如果被交换的是结构体指针数组`dataP`，每次交换的数据量将只有8个字节。
+在编写排序函数的时候，先将它转化为指向`struct People`的二重指针，再对其解引用为一重指针，再进行比较。
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include<time.h>
+
+struct People
+{
+    int age, index;
+    char name[1005];
+} data[200005], *dataP[200005];
+
+int cmp(const void *a, const void *b)
+{
+    struct People *p, *q;
+    p = *((struct People **)a);
+    q = *((struct People **)b);
+    if (p->age == q->age)
+    {
+        return p->index - q->index;
+    }
+    else
+    {
+        return p->age - q->age;
+    }
+}
+
+int main()
+{
+
+    int n,m, t,i;
+    scanf("%d %d", &n,&m);
+    for (i = 0; i < n; ++i)
+    {
+        scanf("%d %s", &data[i].age, data[i].name);
+        dataP[i] = data + i;
+        data[i].index = i;
+    }
+
+    qsort(dataP, n, sizeof dataP[0], cmp);
+
+    for (i = 0; i < m; ++i)
+    {
+        scanf("%d",&t);
+        t--;
+        printf("%d %s\n", dataP[t]->age, dataP[t]->name);
+    }
+}
+```
 
 ### `K` 4401 小迷弟的灵光三现
 
