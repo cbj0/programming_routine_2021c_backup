@@ -116,7 +116,7 @@ int main() {
             haveWine += v;
             wine[havePot++] = v;			// 将数组对应元素置为v，同时酒壶数+1
         } else if (op == 1) {       // 遇店
-            index = minIndex(50000);
+            index = minIndex(havePot);
             if (index != -1) {      // 表示并非所有酒壶都是空的
                 if (v - wine[index] > wine[index]) {    // 最大可加量>剩余量，表示还能加一倍量
                     haveWine += wine[index];
@@ -127,7 +127,7 @@ int main() {
                 }
             }
         } else if (op == 2) {       // 遇花
-            index = maxIndex(50000);
+            index = maxIndex(havePot);
             if (index == -1) {      // 表示所有酒壶都是空的
                 printf("Day %d: Such beautiful flowers, what a pity!\n", i);
                 continue;
