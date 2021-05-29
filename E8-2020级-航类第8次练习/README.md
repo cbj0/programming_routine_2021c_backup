@@ -80,6 +80,55 @@ int main()
 
 ### `C` 4276 小迷弟搞偷袭
 
+#### 题目分析
+
+本题考查快排+二分，首先不排序直接在数组中找答案，大概需要n×m次运算，这样自然是很慢的，于是我们通过n×log(n)次运算的快速排序+m×log(n)次运算的二分查找，可以很快找到答案。
+
+本题的第一个坑点在于排序函数中要用比较两个指针指向值的大小来返回值，而不是直接返回二者之差，因为当二者做差的值超出int范围时，会计算错误导致排序错误。
+
+本题第二个难点在于二分的写法，要求找最大的小于给定值的数，我们不妨找最小的大于等于这个值的数，再返回前一个下标即可，这里为了减少可能的错误，我把太大/太小的数提前判断，剩下的二分过程见代码。
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+int n,a[200100],m,ask;
+int cmp(const void* aa,const void* bb) {
+	int *a=(int *)aa,*b=(int *)bb;
+	if(*a>*b) return 1;
+	if(*a<*b) return -1;
+	return 0;
+}
+int bs(int key) {
+	int l=0,r=n-1;
+	while(l<r) {
+		int mid=l+r>>1;
+		if(a[mid]<key) l=mid+1;
+		else r=mid;
+	}
+	return l-1;
+}
+int main() {
+	int i;
+	scanf("%d %d",&n,&m);
+	for(i=0; i<n; i++) {
+		scanf("%d",&a[i]);
+	}
+	qsort(a,n,sizeof(a[0]),cmp);
+	for(i=0; i<m; i++) {
+		scanf("%d",&ask);
+		if(ask<=a[0]) {
+			puts("too weak");
+			continue;
+		}
+		if(ask>a[n-1]) {
+			printf("%d\n",a[n-1]);
+			continue;
+		}
+		printf("%d\n",a[bs(ask)]);
+	}
+	return 0;
+}
+```
 
 ### `D` 4423 李白打酒
 
