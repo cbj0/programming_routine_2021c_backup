@@ -323,6 +323,199 @@ int main() {
 
 ### `H` 4390 动态链表操作
 
+#### 题目分析
+本题是基础的动态链表操作。本题比较麻烦的是对于链表转接的操作，那么对于链表尾部的处理就要格外小心。另外一个比较坑的点是对于第一个节点（即索引为0的节点）的处理，此时需要更换头部指针。
+#### 示例代码
+```c
+#include <ctype.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct ta
+{
+    char value[105];
+    struct ta *next;
+} table;
+
+int index;
+char optable, s[105];
+
+table *ahead, *aend, *bhead, *bend;
+
+int TrimEnd(char *base);
+int readOperation();
+void init();
+void deleteOne();
+void insert();
+void move();
+void output(table *head, table *end);
+
+int main()
+{
+
+    init();
+    int n, m, k;
+    scanf("%d%d%d", &n, &m, &k);
+    optable = 'a';
+    for (int i = 0; i < n; i++)
+    {
+        index = i;
+        scanf("%s", s);
+        insert();
+    }
+    optable = 'b';
+    for (int i = 0; i < m; i++)
+    {
+        index = i;
+        scanf("%s", s);
+        insert();
+    }
+    for (int i = 0; i < k; i++)
+    {
+        int op = readOperation();
+        switch (op)
+        {
+        case 1:
+            insert();
+            break;
+        case 2:
+            deleteOne();
+            break;
+        case 3:
+            move();
+            break;
+        case 0:
+            goto out;
+        }
+    }
+out:
+    output(ahead, aend);
+    printf("\n");
+    output(bhead, bend);
+}
+
+void output(table *head, table *end)
+{
+    table *p = head;
+    int cnt = 0;
+    for (; p != end; p = p->next, cnt++)
+        printf("%s\n", p->value);
+    if (cnt == 0)
+        printf("Empty!\n");
+}
+
+void init()
+{
+    // 初始化链表
+    ahead = (table *)malloc(sizeof(table));
+    aend = ahead;
+    ahead->next = NULL;
+
+    bhead = (table *)malloc(sizeof(table));
+    bend = bhead;
+    bhead->next = NULL;
+}
+
+void deleteOne()
+{
+    table *head, *last;
+    optable == 'a' ? (head = ahead) : (head = bhead);
+    if (index == 0)
+    {
+        optable == 'a' ? (ahead = head->next) : (bhead = head->next);
+        free(head);
+        return;
+    }
+    while (index--)
+        last = head, head = head->next;
+    last->next = head->next, free(head);
+}
+
+void insert()
+{
+    table *p = (table *)malloc(sizeof(table)), *head, *last;
+    strcpy(p->value, s);
+    optable == 'a' ? (head = ahead) : (head = bhead);
+    if (index == 0)
+    {
+        p->next = head;
+        optable == 'a' ? (ahead = p) : (bhead = p);
+        return;
+    }
+    while (index--)
+        last = head, head = head->next;
+    last->next = p, p->next = head;
+}
+
+void move()
+{
+    table *head, *last, *end, *p, *otherhead, *otherend;
+    optable == 'a' ? (head = ahead, end = aend) : (head = bhead, end = bend);
+    optable == 'a' ? (otherhead = bhead, otherend = bend) : (otherhead = ahead, otherend = aend);
+    if (index == 0)
+    {
+        optable == 'a' ? (ahead = aend) : (bhead = bend);
+        p = head;
+        while (1)
+        { // 换尾
+            if (p->next == end)
+            {
+                p->next = otherend;
+                break;
+            }
+            p = p->next;
+        }
+        while (otherhead->next != otherend)
+            otherhead = otherhead->next;
+        otherhead->next = head;
+        return;
+    }
+    while (index--)
+        last = head, head = head->next;
+    last->next = end;
+    p = head;
+    while (1)
+    { // 换尾
+        if (p->next == end)
+        {
+            p->next = otherend;
+            break;
+        }
+        p = p->next;
+    }
+    if (otherhead == otherend)
+    {
+        optable == 'a' ? (bhead = head) : (ahead = head);
+        return;
+    }
+    while (otherhead->next != otherend)
+        otherhead = otherhead->next;
+    otherhead->next = head;
+}
+
+int readOperation()
+{
+    int op;
+    if (~scanf("%d %c %d", &op, &optable, &index))
+    {
+        if (op == 1)
+            scanf("%s", s);
+        return op;
+    }
+    else
+        return 0;
+}
+
+int TrimEnd(char *base)
+{
+    while (isspace(base[strlen(base) - 1]))
+        base[strlen(base) - 1] = '\0';
+    return strlen(base);
+}
+```
+
 
 ### `I` 4297 大美丽和大凶残
 虽然这道题的题目非常长，但是事实上只需要按照题目给出的指示去做就可以了。
