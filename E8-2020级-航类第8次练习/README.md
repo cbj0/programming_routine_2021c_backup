@@ -77,6 +77,44 @@ int main()
 
 ### `B` 4236 格雷编码
 
+直接根据题目所示函数，只需要自己设计输出二进制表示的函数即可。
+
+```c
+#include<stdio.h>
+void print_binary(int c,int n);
+int D2G(int x);
+int main()
+{
+	int i,n,m;
+	scanf("%d %d",&n,&m);
+	for(i=n;i<m+1;i++)
+	{
+		printf("%d ",i);
+		print_binary(i,8);
+		printf(" ");
+		print_binary(D2G(i),8);
+		printf("\n");
+	}
+    return 0;
+}
+int D2G(int x)
+{
+	return x^(x>>1);
+}
+void print_binary(int c,int n)
+{
+	int i,binary[n];
+	for(i=0;i<n;i++)
+	{
+		binary[n-i-1]=c%2;
+		c/=2;
+	}
+	for(i=0;i<n;i++)
+	{
+		printf("%d",binary[i]);
+	}
+}
+```
 
 ### `C` 4276 小迷弟搞偷袭
 
