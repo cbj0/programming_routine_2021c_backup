@@ -212,6 +212,69 @@ int minIndex(int n) {
 ```
 
 ### `E` 4417 djj的奇怪数列
+#### 题目分析
+
+本题是一个队列的题目，满足先进先出规则；
+
+队列中的初始元素为1，2，3，4，5；每次取出队列的头元素，判断其是否满足被n整除为0，
+
+* 若满足则直接输出；
+* 若不满足，根据头元素的尾数以及题目所给的添加数字规则，在队列尾增加相应的数字；
+
+可以发现，这样形成的队列刚好是满足题目要求的数组从小到大的排列。
+
+#### 示例代码
+
+```C
+#include <stdio.h>
+#include <assert.h>
+typedef long long ll;
+ll queue[1000005]={1,2,3,4,5};
+int n;
+int head,tail=5;
+int main(void)
+{
+    scanf("%d",&n);
+    while(1)
+    {
+        if(queue[head]%n==0)
+        {
+            printf("%lld\n",queue[head]);
+            break;
+        }
+        ll temp=queue[head];
+        switch (temp%10)
+        {
+        case 1:
+            queue[tail++]=temp*10+3;
+            queue[tail++]=temp*10+5;
+            break;
+        case 2:
+            queue[tail++]=temp*10+3;
+            queue[tail++]=temp*10+4;
+            break;
+        case 3:
+            queue[tail++]=temp*10+1;
+            queue[tail++]=temp*10+4;
+            break;
+        case 4:
+            queue[tail++]=temp*10+5;
+            break;
+        case 5:
+            queue[tail++]=temp*10+1;
+            queue[tail++]=temp*10+2;
+            queue[tail++]=temp*10+3;
+            queue[tail++]=temp*10+4;
+            queue[tail++]=temp*10+5;
+            break;
+        default:
+            break;
+        }
+        head++;
+    }
+}
+```
+
 
 
 ### `F` 4251 补码相反数
