@@ -278,6 +278,48 @@ int main(void)
 
 
 ### `F` 4251 补码相反数
+#### 题目分析
+
+根据HINT所说，对输入的二进制进行手动取反加一即可；注意只有100...000的情况是Overflow，以及注意输入全部是0的情况
+
+#### 示例代码
+
+```C
+#include <stdio.h>
+#include <string.h>
+
+char s[100005];
+int main(void)
+{
+    int i,len;
+    
+    while(scanf("%s",s)!=EOF)
+    {
+        int len=strlen(s);
+
+        for(i=0;i<len;i++)
+        s[i]=s[i]=='0'?'1':'0';//取反
+
+        for(i=len-1;i>=0;i--)//加一
+        {
+            if(s[i]=='1')
+            s[i]='0';
+            else
+            {
+                s[i]='1';
+                break;
+            }
+        }
+
+        if(i==0)//如果输入是100...000的情况
+        printf("Overflow!!\n");
+        else
+        printf("%s\n",s);
+    }
+    return 0;
+}
+```
+
 
 
 ### `G` 4424 李白打酒2.0
