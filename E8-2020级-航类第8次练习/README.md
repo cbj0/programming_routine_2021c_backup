@@ -507,7 +507,61 @@ int main() {
 
 ### `L` 4422 简单的函数求和
 
+本题的做法是采用杜教筛在长度巨大的时候，完成积性函数前缀和。
 
+联系到莫比乌斯反演，我们只需要仿照对欧拉函数的求和，先求出 $x^3+3x^2+x$ 的前缀和为 $\frac{n(n+1)(n+1)(n+4)}{4}$ 然后结合费马小定理+逆元的知识即可完成。
 
+本题后来放宽了时限，让唯一一位提交了较慢做法的同学通过了，实际上在性能差距还较远。
 
+```c
+#include<stdio.h>
+typedef unsigned long long ll;
+#define MAXN 2000001
+const ll ha = 23333;
+const int mod = 1000000007;
+const int inv_4 = 250000002;
+int g[MAXN],p[MAXN],cut,pri[MAXN],tot,head[MAXN];
+ll n,sum[MAXN];
+//手写哈希
+int hashcode(ll x) {return x % ha;}
+struct data{int next;ll x,v;}e[MAXN];
+void add(int u,ll v,ll x) {
+    e[++cut].v=v;e[cut].x=x;e[cut].next=head[u];head[u]=cut;
+}
+void build() {
+    g[1] = 5;
+    for (int i = 2; i < MAXN; i++) {
+        g[i] += (i*(1ll * i*i%mod + 3 * i + 1) - g[1]) % mod;
+        if (g[i] >= mod)g[i] -= mod;
+        for (int j = (i << 1); j < MAXN; j += i) {
+            g[j] -= g[i];
+            if (g[j] < 0)g[j] += mod;
+        }
+        g[i] += g[i - 1];
+        if (g[i] >= mod)g[i] -= mod;
+    }
+}
+ll solve(ll x) {
+    if(x<MAXN) return g[x];
+    ll ans=0,k=x%ha,last;
+    for(int i=head[k];i;i=e[i].next)
+      if(e[i].v==x) return e[i].x;
+    for(ll i=2;i<=x;i=last+1) {
+        last=x/(x/i);
+        ans=(ans+(last-i+1)%mod*solve(x/i)%mod)%mod;
+    }
+    ans=((x%mod*(x+1)%mod)%mod*((x+1)%mod*(x+4)%mod)%mod*inv_4%mod-ans+mod)%mod;
+    add(k,x,ans);
+    return ans;
+}
+void wr(ll x) {
+    if (x > 9)wr(x / 10);
+    putchar(x % 10 + 48);
+}
+int main() {
+    build();
+    while(scanf("%llu", &n) != EOF) wr(solve(n)), putchar('\n');
+    return 0;
+}
+```
 
