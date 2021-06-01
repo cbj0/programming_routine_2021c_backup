@@ -93,7 +93,7 @@ int main() {
 - 如果没有问号，直接按照加号和等号分割字符串，判断加和是否相等，并按要求输出
 - 如果有问号，则枚举问号与加号和等号的相对位置（并判断在a+b=c当中的哪一个位置），分别进行计算
 
-#### 示例代码
+#### 示例代码1
 
 ```c
 #include<stdio.h>
@@ -130,6 +130,60 @@ int main() {
 			puts(flag ? "Right!" : "Error!");
 		}
 	}
+}
+```
+
+#### 示例代码2
+```C
+#include <stdio.h>
+#include <string.h>
+char s[200];
+int flag;
+int main(void)
+{
+	while(~scanf("%s",s))
+	{
+		flag=0;
+		int len=strlen(s);
+		for(int i=0;i<len;i++)
+		if(s[i]=='?')
+		{
+			flag=1;
+			if(s[i+1]=='+')flag=2;
+			else if(s[i+1]=='=')flag=3;
+			else if(s[i-1]=='=')flag=4;
+		}
+		if(flag)
+		{
+			int a,b,c;
+			if(flag==2)
+			{
+				sscanf(s,"?+%d=%d",&b,&c);
+				printf("%lld\n",c*1ll-b);
+			}
+			else if(flag==3)
+			{
+				sscanf(s,"%d+?=%d",&a,&c);
+				printf("%lld\n",c*1ll-a);
+			}
+			else if(flag==4)
+			{
+				sscanf(s,"%d+%d=?",&a,&b);
+				printf("%lld\n",a*1ll+b);
+			}
+		}
+		else
+		{
+			int a,b,c;
+			sscanf(s,"%d+%d=%d",&a,&b,&c);
+			if(a+b==c)
+			puts("Right!");
+			else
+			puts("Error!");
+		}
+	}
+	return 0;
+
 }
 ```
 
