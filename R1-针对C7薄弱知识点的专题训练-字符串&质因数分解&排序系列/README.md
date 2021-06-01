@@ -110,7 +110,7 @@ ll get_num(int l, int r) {
 	if (s[i] == '-') f = -1, ++i;
 	else if (s[i] == '+') f = 1, ++i;
 	for (; i <= r; ++i) ret = (ret << 1) + (ret << 3) + (s[i] ^ 48);
-	return ret;
+	return ret * f;
 }
 int main() {
 	while (scanf("%s", s) != EOF) {
