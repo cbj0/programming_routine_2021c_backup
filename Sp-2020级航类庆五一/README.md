@@ -295,7 +295,949 @@ int main()
 
 ## P 4339
 
+据出题人透露，本题的灵感来源于一位《数理逻辑》老师随口提到的比赛项目计划。即读入一个数理逻辑表达式，输出它的真值表。
+
+事实上，它实现的是一个小型编译器的功能。“源代码”就是数理逻辑表达式，“目标程序”就是真值表。
+
+本题最好的做法，是参考Q题里的提示，把P题作为Q题的预演。这种做法用到了《数据结构》课程里面有关“栈”的知识。本门课虽然也讲了栈结构，但是浅尝辄止，对于做这道题而言是不够用的。这种Q题预演的做法相对小巧灵便。
+
+```C
+
+#include<stdio.h>
+#include<string.h>
+#include<ctype.h>
+
+int k[130];
+int len;
+char s[1005];
+
+int cal(int u)
+{
+	int ret=1,x=1,v=0;
+	for(; u!=len; u++)
+	{
+		if(islower(s[u]))
+		{
+			if(x==1)
+			{
+				ret=(ret&(k[s[u]]^v));
+			}
+			else if(x==0)
+			{
+				ret=(ret|(k[s[u]]^v));
+			}
+			v=0;
+		}
+		else
+		{
+			int num;
+			switch(s[u])
+			{
+				case'&':
+					x=1;
+					break;
+				case'|':
+					x=0;
+					break;
+				case'~':
+					v^=1;
+					break;
+				case')':
+					return ret;
+				case'(':
+					if(x==1)
+					{
+						ret=(ret&(cal(u+1)^v));
+					}
+					else if(x==0)
+					{
+						ret=(ret|(cal(u+1)^v));
+					}
+					v=0;
+					num=1;
+					while(num!=0)
+					{
+						u++;
+						if(s[u]=='(')
+						{
+							num++;
+						}
+						else if(s[u]==')')
+						{
+							num--;
+						}
+					}
+			}
+		}
+	}
+	return ret;
+}
+
+char q[15];
+int output[15];
+
+int main()
+{
+	gets(s);
+	len=strlen(s);
+	int n=-1;
+	int i;
+	for(i=0; i<len; i++)
+	{
+		if(islower(s[i])&&k[s[i]]==0)
+		{
+			k[s[i]]=1;
+			q[++n]=s[i];
+		}
+	}
+	scanf("%s",s);
+	len=strlen(s);
+	for(i=0; i<=n; i++)
+	{
+		printf("| %c ",q[i]);
+	}
+	printf("| R |\n");
+	int f;
+	for(f=(1<<(n+1))-1; f>=0; f--)
+	{
+		for(i=0; i<=n; i++)
+		{
+			if((f>>(n-i))&1)
+			{
+				k[q[i]]=0;
+				output[i]=0;
+			}
+			else
+			{
+				k[q[i]]=1;
+				output[i]=1;
+			}
+		}
+		output[n+1]=cal(0);
+		for(i=0; i<=n+1; i++)
+		{
+			if(output[i]==0)
+			{
+				printf("| F ");
+			}
+			else
+			{
+				printf("| T ");
+			}
+		}
+		printf("|\n");
+	}
+}
+
+```
+
+其他思路，就要用到《编译》课里的老套路了。无论是哪个专业，这门课都在大三。“表达式”是编译里面的一个重点研究对象，作为这门课介绍的表达式处理套路，学长学姐们自然是印象十分深刻。这种做法仅做了解即可。
+
+```C
+
+#include<stdio.h>
+#include<string.h>
+
+char SYM[25];
+int TOP;
+
+struct expr
+{
+	char status[1030];
+};
+
+struct expr express();
+
+struct expr parse_primary()
+{
+	struct expr temp;
+	char next=getchar();
+	int loc;
+	int i;
+	switch(next)
+	{
+		case'(':
+			temp=express();
+			next=getchar();
+			break;
+		case'~':
+			temp=parse_primary();
+			for(i=0; i<1026; i++)
+			{
+				temp.status[i]^=1;
+			}
+			break;
+		default:
+			for(i=0; i<TOP; i++)
+			{
+				if(SYM[i]==next)
+				{
+					loc=i;
+					break;
+				}
+			}
+			loc=1<<(TOP-loc-1);
+			for(i=0; i<1026; i++)
+			{
+				temp.status[i]=((i&loc)!=0)?1:0;
+			}
+	}
+	return temp;
+}
+
+struct expr express()
+{
+	struct expr lhs=parse_primary();
+	char peek;
+	for(peek=getchar(); peek=='&'||peek=='|'; peek=getchar())
+	{
+		struct expr rhs=parse_primary();
+		if(peek=='&')
+		{
+			int i;
+			for(i=0; i<1026; i++)
+			{
+				lhs.status[i]=lhs.status[i]&rhs.status[i];
+			}
+		}
+		else if(peek=='|')
+		{
+			int i;
+			for(i=0; i<1026; i++)
+			{
+				lhs.status[i]=lhs.status[i]|rhs.status[i];
+			}
+		}
+	}
+	ungetc(peek,stdin);
+	return lhs;
+}
+
+int main()
+{
+	TOP=0;
+	char c;
+	while((c=getchar())!='\n')
+	{
+		if(c!=' '&&c!='\r')
+		{
+			SYM[TOP]=c;
+			TOP++;
+		}
+	}
+	struct expr ans=express();
+	printf("|");
+	int i;
+	for(i=0; i<TOP; i++)
+	{
+		printf(" %c |",SYM[i]);
+	}
+	printf(" R |\n");
+	int line=1<<TOP;
+	for(i=0; i<line; i++)
+	{
+		printf("|");
+		int j;
+		for(j=TOP-1; j>=0; j--)
+		{
+			((i>>j)&1)?printf(" T |"):printf(" F |");
+		}
+		(ans.status[i]!=0)?printf(" T |\n"):printf(" F |\n");
+	}
+	return 0;
+}
+
+```
 
 ## Q 4395
 
+这道题，来源于一位天才助教对于大作业的一些伟大设想——当然，最终相关提案无下文了，这个选题也有些偏向计算机科学，而且稍微有些抽象了。
+
+原本天才助教想设计一下关于表达式求值、递归分析、自顶向下等背景介绍和小任务，希望设计成一个额外计分的、分模块化的lab。但是由于只能出1道题，最后选择了其中一个方向，设计一个小的表达式解析parser，并将其中一个小任务的内容的完整代码作为思路上的提示，用于降低设计难度，并使用前面已经存在的P题作为铺垫。
+
+最后一道题目除了码量稍微大了一些之外，不见得有多难。按照题目指导思路，即“表达式栈”的思路，设计的代码如下：
+
+```C
+
+#include<stdio.h>
+#include<string.h>
+#include<ctype.h>
+
+char str[114514];
+
+int issub(int l,int r)
+{
+	int i,in=0;
+	if(str[l]!='('||str[r]!=')')
+	{
+		return 0;
+	}
+	for(i=l; i<r; i++)
+	{
+		in+=str[i]=='(';
+		in-=str[i]==')';
+		if(in==0)
+		{
+			return 0;
+		}
+	}
+	return 1;
+}
+
+int isfun(int l,int r)
+{
+	int ret=0,in=0;
+	if(islower(str[l])&&str[l+1]=='('&&str[r]==')')
+	{
+		ret=1;
+	}
+	int i;
+	for(i=l+1; i<r; i++)
+	{
+		in+=str[i]=='(';
+		in-=str[i]==')';
+		if(in==0)
+		{
+			return 0;
+		}
+	}
+	return ret;
+}
+
+int getlst(int L,int R)
+{
+	int i,ret=-1;
+	int in=0;
+	for (i=R; i>=L; i--)
+	{
+		in+=str[i]=='(';
+		in-=str[i]==')';
+		if(in!=0)
+		{
+			continue;
+		}
+		if(str[i]=='+'||str[i]=='-')
+		{
+			return i;
+		}
+		if((str[i]=='*'||str[i]=='/')&&ret==-1)
+		{
+			ret=i;
+		}
+	}
+	if(ret!=-1)
+	{
+		return ret;
+	}
+	for (i=R; i>=L; i--)
+	{
+		in+=str[i]=='(';
+		in-=str[i]==')';
+		if(in!=0)
+		{
+			continue;
+		}
+		if(str[i]=='.')
+		{
+			return i;
+		}
+	}
+	return ret;
+}
+
+int q[100005];
+int t;
+int cnt;
+
+int c(int L,int R)
+{
+	int x,y;
+	if(L>R)
+	{
+		return 0;
+	}
+	if(L==R&&islower(str[L]))
+	{
+		return -str[L];
+	}
+	if(issub(L,R))
+	{
+		return c(L+1,R-1);
+	}
+	if(isfun(L,R))
+	{
+		int num=0,las=L+2,in=0;
+		int i;
+		for(i=las; i<=R-1; i++)
+		{
+			if(str[i]=='(')
+			{
+				in++;
+			}
+			if(str[i]==')')
+			{
+				in--;
+			}
+			if(in!=0)
+			{
+				continue;
+			}
+			if(str[i]==',')
+			{
+				q[++t]=c(las,i-1);
+				las=i+1;
+				num++;
+			}
+		}
+		q[++t]=c(las,R-1);
+		num++;
+		printf("%c ",str[L]);
+		for(i=t-num+1; i<=t; i++)
+		{
+			if(q[i]<0)
+			{
+				printf("%c ",-q[i]);
+			}
+			else
+			{
+				printf("%d ",q[i]);
+			}
+		}
+		printf("\n");
+		while(num--)
+		{
+			q[t]=0;
+			t--;
+		}
+		return ++cnt;
+	}
+	int mid=getlst(L,R);
+	if(str[mid]=='.')
+	{
+		q[++t]=c(L,mid-1);
+		int num=1,las=mid+3,in=0;
+		int i;
+		for(i=las; i<=R-1; i++)
+		{
+			if(str[i]=='(')
+			{
+				in++;
+			}
+			if(str[i]==')')
+			{
+				in--;
+			}
+			if(in!=0)
+			{
+				continue;
+			}
+			if(str[i]==',')
+			{
+				q[++t]=c(las,i-1);
+				las=i+1;
+				num++;
+			}
+		}
+		q[++t]=c(las,R-1);
+		num++;
+		printf("%c ",str[mid+1]);
+		for(i=t-num+1; i<=t; i++)
+		{
+			if(q[i]<0)
+			{
+				printf("%c ",-q[i]);
+			}
+			else
+			{
+				printf("%d ",q[i]);
+			}
+		}
+		printf("\n");
+		while(num--)
+		{
+			q[t]=0;
+			t--;
+		}
+		return ++cnt;
+	}
+	q[++t]=c(L,mid-1);
+	q[++t]=(y=c(mid+1,R));
+	printf("%c ",str[mid]);
+	if(q[t-1]<0)
+	{
+		printf("%c ",-q[t-1]);
+	}
+	else
+	{
+		printf("%d ",q[t-1]);
+	}
+	if(q[t]<0)
+	{
+		printf("%c ",-q[t]);
+	}
+	else
+	{
+		printf("%d ",q[t]);
+	}
+	q[t]=0;
+	t--;
+	q[t]=0;
+	t--;
+	printf("\n");
+	return ++cnt;
+}
+
+int main()
+{
+	scanf("%s",str+1);
+	int len;
+	len=strlen(str+1);
+	c(1,len);
+}
+
+```
+
+出题助教给出的自顶向下标程如下：
+
+```C
+
+#include<stdio.h>
+#include<string.h>
+#include<stdlib.h>
+#include<ctype.h>
+
+char input[130];
+int len;
+
+struct parse_tree_node
+{
+	int dfs_time;
+	char key_link;
+	int child_index[130];
+	int child_cnt;
+};
+
+struct parse_tree_node memory_pool[130];
+int node_cnt;//在内存池中开设的节点个数
+int root;//语法树根节点的下标
+int dfs_cnt;//dfs序的时间戳
+int time_table[130];//dfs_time memory_pool_index
+
+void clear(struct parse_tree_node * x)
+{
+	int i = 0;
+	for (i = 0; i < x->child_cnt; ++i)
+		x->child_index[i] = 0;
+	x->dfs_time = 0;
+	x->key_link = '\0';
+	x->child_cnt = 0;
+}
+
+void add_child(struct parse_tree_node * x, int a)
+{
+	x->child_index[x->child_cnt] = a;
+	x->child_cnt++;
+}
+
+int is_leaf(struct parse_tree_node * x)
+{
+	int i = 0;
+	for (i = 0; i < x->child_cnt; ++i)
+		if (x->child_index[i])
+			return 0;
+	return 1;
+}
+
+void print(struct parse_tree_node * x)
+{
+	putchar(x->key_link), putchar(' ');
+	for (int i = 0; i < x->child_cnt; ++i)
+	{
+		int ch = x->child_index[i];
+		if (memory_pool[ch].dfs_time) printf("%d ", memory_pool[ch].dfs_time);
+		else putchar(memory_pool[ch].key_link), putchar(' ');
+	}
+	putchar('\n');
+}
+
+void back_trace(int _index)//后序遍历dfs序部分
+{
+	for (int i = 0; i < memory_pool[_index].child_cnt; ++i)
+		back_trace(memory_pool[_index].child_index[i]);
+	if (!is_leaf(&memory_pool[_index]))
+		memory_pool[_index].dfs_time = ++dfs_cnt, time_table[dfs_cnt] = _index;
+}
+
+void init()
+{
+	for (int i = 1; i <= node_cnt; ++i)
+		clear(&memory_pool[i]);
+	node_cnt = root = 0;
+	dfs_cnt = 0;
+}
+
+int is_duplicate_bracket(int l, int r)
+{
+	int s[130], cnt = 0;
+	memset(s, 0, sizeof(s));
+	int ret = 0;
+	for (int i = l; i < r; ++i)
+	{
+		if (input[i] == '(') s[cnt] = i, cnt++;
+		if (input[i] == ')') cnt--, s[cnt] = 0;
+	}
+	if (cnt == 1 && s[0] == l) ret = 1;
+	return ret;
+}
+
+int get_plus_or_minus(int l, int r)
+{
+	int in = 0;//在多少层括号内，无论正负，只有0才是真的需要的
+	for (int i = r; i >= l; --i)
+	{
+		in += input[i] == '(';
+		in -= input[i] == ')';
+		if (in) continue;
+		if (input[i] == '+' || input[i] == '-') return i;
+	}
+	return -1;
+}
+
+int get_multi_or_div(int l, int r)
+{
+	int in = 0;//在多少层括号内，无论正负，只有0才是真的需要的
+	for (int i = r; i >= l; --i)
+	{
+		in += input[i] == '(';
+		in -= input[i] == ')';
+		if (in) continue;
+		if (input[i] == '*' || input[i] == '/') return i;
+	}
+	return -1;
+}
+
+int get_member_func(int l, int r)
+{
+	int in = 0;//在多少层括号内，无论正负，只有0才是真的需要的
+	for (int i = r; i >= l; --i)
+	{
+		in += input[i] == '(';
+		in -= input[i] == ')';
+		if (in) continue;
+		if (input[i] == '.') return i;
+	}
+	return -1;
+}
+
+int is_stadard_func(int l, int r)
+{
+	if (r - l + 1 <= 3) return 0;
+	return islower(input[l]) && input[l + 1] == '(' && input[r] == ')';
+}
+
+int* get_all_comma(int l, int r)
+{
+	int* ret;
+	ret = (int*)malloc(sizeof(int) * 130);
+	memset(ret, -1, sizeof(int) * 130);
+	int cnt = 0;
+	int in = 0;
+	for (int i = l; i <= r; ++i)
+	{
+		in += input[i] == '(';
+		in -= input[i] == ')';
+		if (in) continue;
+		if (input[i] == ',') ret[cnt] = i, cnt++;
+	}
+	return ret;
+}
+
+int build(int l, int r)
+{
+	if (l > r) return 0;
+	//pre-treat : 去掉所有括号
+	while (is_duplicate_bracket(l, r)) l++, r--;
+	int ptn = ++node_cnt, pos = -1;
+	//特判 priority 5 : 常量
+	if (l == r)
+	{
+		memory_pool[ptn].key_link = input[l];
+		return ptn;
+	}
+	//priority 1 : 加减符
+	pos = get_plus_or_minus(l, r);
+	if (pos != -1)
+	{
+		memory_pool[ptn].key_link = input[pos];
+		add_child(&memory_pool[ptn], build(l, pos - 1));
+		add_child(&memory_pool[ptn], build(pos + 1, r));
+		return ptn;
+	}
+	//priority 2 : 乘除符
+	pos = get_multi_or_div(l, r);
+	if (pos != -1)
+	{
+		memory_pool[ptn].key_link = input[pos];
+		add_child(&memory_pool[ptn], build(l, pos - 1));
+		add_child(&memory_pool[ptn], build(pos + 1, r));
+		return ptn;
+	}
+	//priority 3 : 成员函数
+	pos = get_member_func(l, r);
+	if (pos != -1)
+	{
+		memory_pool[ptn].key_link = input[pos + 1];//注意字母在'.'后面
+		add_child(&memory_pool[ptn], build(l, pos - 1));
+		int* commas = get_all_comma(pos + 3, r - 1);
+		int commas_size = 0;
+		while (commas[commas_size] >= 0)++commas_size;
+		commas[commas_size] = r;
+		commas_size++;
+
+		int start = pos + 3, i = 0;
+		for (i = 0; i < commas_size; ++i)
+		{
+			add_child(&memory_pool[ptn], build(start, commas[i] - 1));
+			start = commas[i] + 1;
+		}
+		free(commas);
+		return ptn;
+	}
+	//priority 4 : 普通函数
+	pos = is_stadard_func(l, r);
+	if (pos)
+	{
+		memory_pool[ptn].key_link = input[l];
+		int* commas = get_all_comma(l + 2, r - 1);
+		int commas_size = 0;
+		while (commas[commas_size] >= 0)++commas_size;
+		commas[commas_size] = r;
+		commas_size++;
+
+		int start = l + 2, i = 0;
+		for (i = 0; i < commas_size; ++i)
+		{
+			add_child(&memory_pool[ptn], build(start, commas[i] - 1));
+			start = commas[i] + 1;
+		}
+		free(commas);
+		return ptn;
+	}
+	return 0;
+}
+
+int main()
+{
+	while (scanf("%s", input) != EOF)
+	{
+		init();
+		len = strlen(input);
+		root = build(0, len - 1);
+		back_trace(root);
+		int i = 0;
+		for (i = 1; i <= dfs_cnt; ++i)
+			print(&memory_pool[time_table[i]]);
+	}
+}
+
+```
+
+另一种自底向上的写法如下：
+
+```C
+
+#include<stdio.h>
+
+int LINE;//当前行号
+
+struct expr
+{
+	int valid;
+	int isline;//是行号
+	int value;//名字或行号
+};
+
+struct expr express();
+
+struct expr func(char name,struct expr lhs)//传入函数名，已知的左值，默认左括号也被读了。左值仅当valid的时候才会输出
+{
+	struct expr mem[100];
+	int top=0;
+	char next=0;
+	while(next!=')')//回退时并不改变next。执行函数的参数列表项 
+	{
+		mem[top]=express();
+		top++;
+		next=getchar();//右小括号或逗号
+	}//结束的时候右小括号已经读过了 
+	printf("%c",name);
+	if(lhs.valid==1)
+	{
+		if(lhs.isline==1)//是行号
+		{
+			printf(" %d",lhs.value);
+		}
+		else
+		{
+			printf(" %c",(char)lhs.value);
+		}
+	}
+	int i;
+	for(i=0;i<top;i++)
+	{
+		if(mem[i].isline==1)//是行号
+		{
+			printf(" %d",mem[i].value);
+		}
+		else
+		{
+			printf(" %c",(char)mem[i].value);
+		}
+	}
+	printf("\n");
+	LINE++;
+	struct expr temp;
+	temp.valid=1;
+	temp.isline=1;
+	temp.value=LINE;
+	return temp;
+}
+
+struct expr parse_primary()//处理常量、括号、普通函数。返回行号
+{
+	char next=getchar();
+	if(next=='(')//左括号 
+	{
+		struct expr temp=express();
+		next=getchar();//右括号
+		return temp;//直接无脑弹出temp 
+	}
+	else//标识符。函数也在这部分
+	{
+		char temp=next;
+		next=getchar();
+		if(next=='(')//左括号 
+		{
+			struct expr nul;
+			nul.valid=0;
+			return func(temp,nul);
+		}
+		else//一个普通的标识符
+		{
+			ungetc(next,stdin);//退回左括号
+			struct expr ans;
+			ans.isline=0;
+			ans.valid=1;
+			ans.value=temp;
+			return ans;
+		}
+	}
+}
+
+struct expr combine(struct expr lhs,char op,struct expr rhs)//处理加减乘除。输出语句，返回行号expr
+{
+	printf("%c ",op);
+	if(lhs.isline==1)//是行号
+	{
+		printf("%d ",lhs.value);
+	}
+	else
+	{
+		printf("%c ",(char)lhs.value);
+	}
+	if(rhs.isline==1)//是行号
+	{
+		printf("%d\n",rhs.value);
+	}
+	else
+	{
+		printf("%c\n",(char)rhs.value);
+	}
+	LINE++;
+	struct expr temp;
+	temp.valid=1;
+	temp.isline=1;
+	temp.value=LINE;
+	return temp;
+}
+
+int prec(char op)//返回指定算符的优先级
+{
+	if(op=='+'||op=='-')
+	{
+		return 1;
+	}
+	else if(op=='*'||op=='/')
+	{
+		return 2;
+	}
+}
+
+int isop(char op)
+{
+	if(op=='+'||op=='-'||op=='*'||op=='/')
+	{
+		return 1;
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+struct expr parse_opg(struct expr lhs,int cerp)//cerp是左部优先级。每次调用这个的时候，下一个总应该是运算符。点运算应该在这里特判。所有的lhs rhs代表行号
+{
+	char peek=getchar();//运算符1，prec是优先级
+	while(peek=='.')//是个点运算
+	{
+		char temp=getchar();
+		getchar();//左括号
+		lhs=func(temp,lhs);
+		peek=getchar();//再来
+	}
+	while(isop(peek)&&prec(peek)>=cerp)//peek是二元运算符，peek优先级大于等于左部旧优先级就要规约
+	{
+		char op=peek;
+		struct expr rhs=parse_primary();//右部读一个并解析某个东西3
+		peek=getchar();//再预读下一个运算符2。比较1和2两个运算符的优先级
+		while(peek=='.')//是个点运算
+		{
+			char temp=getchar();
+			getchar();//左括号
+			rhs=func(temp,rhs);
+			peek=getchar();//再来
+		}
+		while(isop(peek)&&prec(peek)>prec(op))//peek是二元运算符且peek优先级大于op优先级。因为赋值只能出现一次，且优先级最低，故无需考虑右结合
+		{
+			ungetc(peek,stdin);//这里必须退回运算符2
+			rhs=parse_opg(rhs,prec(peek));//做右边
+			peek=getchar();
+			while(peek=='.')//是个点运算
+			{
+				char temp=getchar();
+				getchar();//左括号
+				rhs=func(temp,rhs);
+				peek=getchar();//再来
+			}
+		}
+		lhs=combine(lhs,op,rhs);//表示规约
+	}
+	ungetc(peek,stdin);//这里必须退一个后面的字符
+	return lhs;
+}
+
+struct expr express()
+{
+	struct expr lhs=parse_primary();
+	struct expr ans=parse_opg(lhs,0);
+	return ans;
+}
+
+int main()
+{
+	express();
+	return 0;
+}
+
+```
 
