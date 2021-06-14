@@ -390,6 +390,8 @@ int main()
 		for(j=0;j<n;j++)
 		{
 			scanf("%lld",&A[i][j]);
+                        while(A[i][j] < 0)A[i][j] += 998244353;
+                        A[i][j] %= 998244353;
 		}
 	}
 	long long ans=Det(n);
