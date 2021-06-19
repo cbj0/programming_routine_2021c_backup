@@ -523,35 +523,74 @@ int main()
 * 同样的，如果 $i> n/2$ 并且 $j\leq n/2$ ，那么应该返回 $\text{fire(i-n/2, j, n/2)}$ ；
 * 如果 $i> n/2$ 并且 $j>n/2$ ，那么应该返回 $\text{fire(i-n/2, j-n/2, n/2)}$ 。
 
-#### 示例代码
+#### 示例代码1
 
 ```C
-#include <stdio.h>
+#include<stdio.h>
+
 int n;
+
 int fire(int a,int b,int N)//表示方阵边长为N，记者位于第i行，第j列的情况
 {
-    int half=N/2;
-    if(N==1)return 1;
-    if(a<=half && b<=half)return 0;
-    if(a<=half && b>half)return fire(a,b-half,half);
-    if(a>half && b<=half)return fire(a-half,b,half);
-    return fire(a-half,b-half,half);
+	int half=N/2;
+	if(N==1)return 1;
+	if(a<=half && b<=half)return 0;
+	if(a<=half && b>half)return fire(a,b-half,half);
+	if(a>half && b<=half)return fire(a-half,b,half);
+	return fire(a-half,b-half,half);
 }
+
 int main(void)
 {
-    scanf("%d",&n);
-    int all=1<<n;
-
-    for(int i=1;i<=all;i++)
-    {
-        for(int j=1;j<=all;j++)
-        printf("%d ",fire(i,j,all));
-        putchar('\n');
-    }
-
-    return 0;
+	while(scanf("%d",&n)!=EOF)
+	{
+		int all=1<<n;
+		for(int i=1; i<=all; i++)
+		{
+			for(int j=1; j<=all; j++)
+				printf("%d ",fire(i,j,all));
+			putchar('\n');
+		}
+		putchar('\n');
+	}
+	return 0;
 }
 ```
 
+#### 示例代码2
 
+```C
+#include<stdio.h>
+
+char C[1100][1100];
+
+int t;
+int n,m;
+
+int main()
+{
+	C[0][0]=1;
+	int i,j;
+	for (i = 1; i < 1100; ++i)
+	{
+		for (j = 0; j <= i; ++j)
+		{
+			C[i][j] =C[i - 1][j]^C[i - 1][j - 1];
+		}
+	}
+	while(scanf("%d",&t)!=EOF)
+	{
+		int size=1<<t;
+		for(i=0;i<size;i++)
+		{
+			for(j=size-1;j>=0;j--)
+			{
+				printf("%d ",C[i][j]);
+			}
+			printf("\n");
+		}
+		printf("\n");
+	}
+}
+```
 
