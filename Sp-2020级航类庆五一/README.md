@@ -93,6 +93,59 @@ int main()
 
 ## N 4403
 
+本题为一个异或博弈找规律的题目
+
+首先所有数进行异或和，那么异或和的最高位1必然是可以攻占的“制高点”
+
+如果对应位为1的数只有一个，那么先手只要拿下这个，就必然胜利了。
+
+如果制高点唯一，则非制高点为奇数的时候同样能赢，偶数时反而会输（因为先手第一发拿制高点,后手就去抢次制高点 反之亦然）
+
+唯一的平局局面，即为异或和为0的时候。
+
+```c
+#include<stdio.h>
+#define maxn 200010
+#define getchar getchar_unlocked
+#define putchar putchar_unlocked
+int rd() {
+    int k = 0, f = 1;
+    char c = getchar();
+    while (c < '0' || c > '9') {
+        if (c == '-') f = -1;
+        c = getchar();
+    }
+    while (c >= '0' && c <= '9') {
+        k = (k << 1) + (k << 3) + (c ^ 48);
+        c = getchar();
+    }
+    return f > 0 ? k : -k;
+}
+int a[maxn];
+int t, n, i;
+int all;
+int tmp;
+int k;//可以攻占的制高点 (注意不一定是最高的 万一最高的有偶数个就得看次高的)
+int main() {
+    t = rd();
+    while (t--) {
+        n = rd(), all = k = 0;
+        for (i = 1; i <= n; ++i) a[i] = rd(), all ^= a[i];
+        tmp = 1 << 30;
+        while (all < tmp) tmp >>= 1;
+        for (i = 1; i <= n; ++i) if (tmp & a[i]) ++k;//制高点应该必然是奇数个才对(除非答案是0)
+        if (tmp == 0) putchar('0');//异或和是0的时候一定平局
+        else if (k == 1) putchar('1');//可以攻占的制高点只有1个,那么先手必赢
+        else if (!((n - k) & 1)) putchar('1');//攻占制高点不一定唯一,但是奇数非制高点的时候,下位的抗衡无关紧要,关键就看这个奇数位即可
+        else putchar('-'), putchar('1');//偶数非制高点,一定会输 先手第一发拿制高点,后手就去抢次制高点 反之亦然
+        putchar('\n');
+    }
+}
+//case 1 : 2 1 1
+//case 2 : 5 8 8 8 8 1
+//case 3 : 5 8 8 8 1 1 
+//case 4 : 4 8 8 8 1
+```
 
 ## O 4382
 根据最后的提示，可以很方便地求解过三点的圆。一个问题是，如何在已知两圆的一个交点的情形下，求解另一个交点。
