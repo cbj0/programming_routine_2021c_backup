@@ -14,25 +14,335 @@
 鉴于本题的特殊性，答案略。
 
 ## B 4353
+需要注意的是，如果一个人中间被挑战下去了，又重新登上了擂主，那么他之前的博弈次数也要计算进去.
 
+```C
+#include<stdio.h>
+int cnt[114514];
+int win(char from, char to)
+{
+	return (from == 'A' && to == 'C') || (from == 'B' && to == 'A') || (from == 'C' && to == 'B');
+}
+int tot, cur;
+char A[20], B[20];
+int main()
+{
+	scanf("%d", &tot);
+	while (scanf("%d%s%s", &cur, A, B) != EOF)
+	{
+		++cnt[tot], ++cnt[cur];
+		if (!win(A[0], B[0])) tot = cur;
+	}
+	printf("%04d %d\n", tot, cnt[tot]);
+}
+```
 
 ## C 4377
+一行的不定组输入，C语言要实现的话需要一定技巧.
 
+```C
+#include<stdio.h>
+#include<ctype.h>
+#include<stdbool.h>
+#define maxn 114514
+char s[maxn];
+int len, pos, i, n, t;
+double tmp, sum, ave;
+int read_double(int _index, double* in)
+{
+	while (s[_index] && isspace(s[_index]))++_index;
+	if (!s[_index]) return -1;
+	char c = s[_index];
+	(*in) = 0;
+	double f = 1.0;
+	while (!isdigit(c))
+	{
+		if (c == '-')f = -1.0;
+		c = s[++_index];
+	}
+	while (isdigit(c))
+	{
+		(*in) = (*in) * 10.0 + (c - 48);
+		c = s[++_index];
+	}
+	if (c == '.')
+	{
+		double fraction = 1;
+		c = s[++_index];
+		while (isdigit(c))
+		{
+			fraction /= 10;
+			(*in) += (c - 48) * fraction;
+			c = s[++_index];
+		}
+	}
+	(*in) *= f;
+	return _index;
+}
+int main()
+{
+	while (fgets(s, maxn, stdin))
+	{
+		pos = n = sum = 0;
+		while ((pos = read_double(pos, &tmp)) != EOF)
+			++n, sum += tmp;
+		ave = sum / n;
+		printf("%d:%d %.2f\n", ++t, n, ave);
+	}
+}
+```
 
 ## D 4387
+请用`%02d`控制时,分,秒的输出.
 
+```C
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+typedef struct info
+{
+	char stu[55];
+	int id;
+	double score;
+	char penalty[25];
+} info;
+info a[1010];
+int cmp(const void* p1, const void* p2)
+{
+	info* x = (info*)p1, * y = (info*)p2;
+	int flag = 0;
+	if (x->score != y->score) return x->score > y->score ? -1 : 1;
+	if ((flag = strcmp(x->penalty, y->penalty)) != 0) return flag < 0 ? -1 : 1;
+	return x->id - y->id;
+}
+int n, i;
+int main()
+{
+	scanf("%d", &n);
+	for (i = 0; i < n; ++i)scanf("%s%d%lf%s", a[i].stu, &a[i].id, &a[i].score, a[i].penalty);
+	qsort(a, n, sizeof(a[0]), cmp);
+	for (i = 0; i < n; ++i)printf("%s %d %.2f %s\n", a[i].stu, a[i].id, a[i].score, a[i].penalty);
+}
+```
 
 ## E 4404
+一看到时间空间限制，就要想到直接用异或和来解决这题.
 
+```C
+#include<stdio.h>
+unsigned tmpint;
+unsigned n;
+unsigned ans;
+unsigned rd()
+{
+	unsigned k = 0;
+	char c = getchar();
+	while (c < '0' || c > '9')
+		c = getchar();
+
+	while (c >= '0' && c <= '9')
+	{
+		k = (k << 1) + (k << 3) + (c ^ 48);
+		c = getchar();
+	}
+	return k;
+}
+void wr(unsigned x)
+{
+	if (x > 9)wr(x / 10);
+	putchar(x % 10 + '0');
+}
+int main()
+{
+	n = rd();
+	n <<= 1, --n;
+	while(n--)
+	{
+		tmpint = rd();
+		ans ^= tmpint;
+	}
+	wr(ans);
+}
+```
 
 ## F 4350
+费马小定理+快速幂/扩展欧拉引理+快速幂.
 
+```C
+#include<stdio.h>
+typedef unsigned long long ll;
+const ll mod = 100000007;
+ll a, b, c;//a^b mod m
+void wr(ll x)
+{
+	if (x > 9)wr(x / 10);
+	putchar(x % 10 + 48);
+}
+ll phi(ll x)
+{
+	ll res = x;
+	for (ll i = 2; i <= x / i; i++)
+		if (x % i == 0)
+		{
+			res = res / i * (i - 1);
+			while (x % i == 0) x /= i;
+		}
+	if (x > 1) res = res / x * (x - 1);
+	return res;
+}
+ll AmulBmodP(ll a, ll b, ll p)
+{
+	ll ret = 0;
+	while (b)
+	{
+		if (b & 1)
+			ret = (ret + a) % p;
+		a = (a << 1) % p;
+		b >>= 1;
+	}
+	return ret;
+}
+ll ApowBmodP(ll a, ll b, ll p)
+{
+	ll ret = 1;
+	while (b)
+	{
+		if (b & 1)ret = (ret * a) % p;
+		a = AmulBmodP(a, a, p);
+		b >>= 1;
+	}
+	return ret % p;
+}
+int main()
+{
+	while (scanf("%llu%llu%llu", &a, &b, &c) != EOF)
+		printf("%llu\n", ApowBmodP(a, ApowBmodP(b, c, mod - 1), mod));
+}
+```
 
 ## G 4406
+C语言模拟双向链表。
 
+```C
+#include<stdio.h>
+#include<ctype.h>
+#define getchar_unlocked
+#define putchar_unlocked
+#define maxn 1919810
+int rd()
+{
+	int k = 0, f = 1;
+	char c = getchar();
+	while (!isdigit(c))
+	{
+		if (c == '-')f = -1;
+		c = getchar();
+	}
+	while (isdigit(c))
+	{
+		k = (k << 1) + (k << 3) + c - 48;
+		c = getchar();
+	}
+	return k * f;
+}
+void wr(int x)
+{
+	if (x < 0) putchar('-'), x = -x;
+	if (x > 9)wr(x / 10);
+	putchar(x % 10 + '0');
+}
+int n, m;
+int op, x, y;
+int nxt[maxn], pre[maxn];
+void init(int n)
+{
+	int i = 0;
+	for (i = 1; i <= n; ++i) nxt[i] = i + 1, pre[i] = i - 1;
+	nxt[n] = pre[1] = 0;
+	nxt[0] = 1;
+}
+void rem(int x)
+{
+	int l = pre[x], r = nxt[x];
+	nxt[l] = r, pre[r] = l;
+	nxt[x] = pre[x] = 0;
+}
+void ins(int x, int y)
+{
+	nxt[y] = nxt[x], pre[nxt[x]] = y;
+	pre[y] = x, nxt[x] = y;
+}
+int main()
+{
+	n = rd(), m = rd();
+	init(n);
+	while (m--)
+	{
+		op = rd(), x = rd();
+		if (op & 1) rem(x);
+		else y = rd(), ins(x, y);
+	}
+	int node = nxt[0];
+	while (node != 0) wr(node), putchar(' '), node = nxt[node];
+}
+```
 
 ## H 4407
+突出显示单词的$n×n$矩阵。
 
+```C
+#include<stdio.h>
+#include<string.h>
+#include<stdbool.h>
+#define maxn 110
+#define maxDep 8
+char map[maxn][maxn];
+bool occur[maxn][maxn];
+char target[10] = "communism";
+struct node
+{
+	int x, y;
+} route[maxn];
+int nx[8] = { -1,-1,-1,0,0,1,1,1 };
+int ny[8] = { -1,0,1,1,-1,-1,0,1 };
+//坐标,方向,深度
+int n;
+inline bool illegal(int x, int y)
+{
+	return x < 0 || x >= n || y < 0 || y >= n;
+}
+void dfs(int x, int y, int k, int dep)
+{
+	if (dep > maxDep)
+		for (int i = 0; i <= maxDep; ++i)occur[route[i].x][route[i].y] = true;
+	if (illegal(x, y))return;
+	if (map[x][y] != target[dep])return;
+	else
+	{
+		int dx = x + nx[k], dy = y + ny[k];
+		route[dep].x = x, route[dep].y = y;
+		dfs(dx, dy, k, dep + 1);
+	}
+}
+
+int main()
+{
+	scanf("%d", &n);
+	for (int i = 0; i < n; ++i)
+		scanf("%s", map[i]);
+	memset(occur, false, sizeof(occur));
+	for (int i = 0; i < n; ++i)
+		for (int j = 0; j < n; ++j)
+			for (int k = 0; k < 8; ++k)
+				dfs(i, j, k, 0);
+
+
+
+	for (int i = 0; i < n; ++i, putchar('\n'))
+		for (int j = 0; j < n; ++j)
+			putchar(occur[i][j] ? map[i][j] : '*');
+}
+```
 
 ## I 4331
 
