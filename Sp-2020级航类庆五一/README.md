@@ -390,16 +390,511 @@ int main()
 ```
 
 ## J 4408
+坑点较多，需要根据题意进行模拟。注意以下几点：
 
+- 空格可能错位，我们需要直接忽略空格的干扰。
+- `isalpha`函数的返回值并非**非0即1**！这一点需要注意。
+- 如果去掉了所有的空格，他俩并不一样长，则直接判断是错误的。
+- 去掉空格干扰一一比对时，还需要观察空格是否对齐/大小写是否对齐。
+- 最后比较的时候，只需要密码表的列不重复就行，行重复无所谓。
+
+```C
+#include<stdio.h>
+#include<string.h>
+#include<ctype.h>
+#include<stdbool.h>
+#define maxn 114514
+char key[maxn], ori[maxn], ans[maxn];
+char tmp[maxn], tmp2[maxn];
+int len_key, len_ori, len_ans, len_tmp, len_tmp2;
+char sheet[30][30];
+int i, j;
+int flag = 0;
+bool occur[26];
+void crlf(char* s, int* len)
+{
+	*len = strlen(s);
+	while (s[(*len) - 1] == '\n' || s[(*len) - 1] == '\r') s[--(*len)] = '\0';
+}
+
+void copy_without_space(char* dst, int* len_dst, char* src, int* len_src)
+{
+	for (i = 0; i < *len_src; ++i)
+		if (!isspace(src[i]))
+			dst[(*len_dst)++] = tolower(src[i]);
+	dst[*len_dst] = '\0';
+}
+
+bool judge_col(int y)
+{
+	int x = 0;
+	memset(occur, 0, sizeof(occur));
+	for (; x < 26; ++x)
+	{
+		if (!sheet[x][y])continue;
+		if (occur[sheet[x][y] - 'A']) return false;
+		else occur[sheet[x][y] - 'A'] = true;
+	}
+	return true;
+}
+
+bool check()
+{
+	int x = 0, y = 0;
+	for (; y < 26; ++y)if (!judge_col(y)) return false;
+	return true;
+}
+
+int main()
+{
+	while (fgets(key, maxn, stdin))
+	{
+		flag = 1;
+		memset(sheet, 0, sizeof(sheet));
+		len_key = len_ori = len_ans = len_tmp = 0;
+		crlf(key, &len_key);
+		for (i = 0; i < len_key; ++i) key[i] = tolower(key[i]);
+		fgets(tmp, maxn, stdin), crlf(tmp, &len_tmp);
+		copy_without_space(ori, &len_ori, tmp, &len_tmp);
+		fgets(tmp2, maxn, stdin), crlf(tmp2, &len_tmp2);
+		copy_without_space(ans, &len_ans, tmp2, &len_tmp2);
+
+		//corner case
+		//notice : function is... does not necessarily return at 1
+		if (len_tmp != len_tmp2) flag = 0;
+		for (i = 0; i < len_tmp && flag; ++i)
+			if ((((isspace(tmp[i]) > 0) + (isspace(tmp2[i]) > 0)) == 1) || (((islower(tmp[i]) > 0) + (isupper(tmp2[i]) > 0) == 2)))
+				flag = 0;
+
+
+		if (!flag)
+		{
+			puts("ARE YOU GOOD MALAYS1A?\n");
+			continue;
+		}
+
+		for (i = 0, j = 0; i < len_ans && flag; ++i, j = (j + 1) % len_key)
+		{
+			int x = ori[i] - 'a', y = key[j] - 'a';
+			if (!sheet[x][y]) sheet[x][y] = toupper(ans[i]);
+			else if (sheet[x][y] != toupper(ans[i])) flag = 0;
+		}
+		if (!flag || !check())
+		{
+			puts("ARE YOU GOOD MALAYS1A?\n");
+			continue;
+		}
+		for (i = 0; i < 26; ++i, putchar('\n'))
+			for (j = 0; j < 26; ++j)
+				putchar(sheet[i][j] ? sheet[i][j] : '\'');
+		putchar('\n');
+	}
+}
+```
 
 ## K 4312
+模拟判断即可。
 
+```C
+#include <stdio.h>
+#include <stdlib.h>
+int a[20][20];
+int cnt;
+int bar_space(int x, int y, int z) //判断空余位置
+{
+	if (z == 1)
+	{
+		if (x - 1 >= 0 && a[x - 1][y] == 0)
+			return 1;
+		if (x + 4 < 19 && a[x + 4][y] == 0)
+			return 1;
+	}
+
+	if (z == 2)
+	{
+		if (y - 1 >= 0 && a[x][y - 1] == 0)
+			return 1;
+		if (y + 4 < 19 && a[x][y + 4] == 0)
+			return 1;
+	}
+
+	if (z == 3)
+	{
+		if (x - 1 >= 0 && y - 1 >= 0 && a[x - 1][y - 1] == 0)
+			return 1;
+		if (x + 4 < 19 && y + 4 < 19 && a[x + 4][y + 4] == 0)
+			return 1;
+	}
+
+	if (z == 4)
+	{
+		if (x - 1 >= 0 && y + 1 < 19 && a[x - 1][y + 1] == 0)
+			return 1;
+		if (x + 4 < 19 && y - 4 >= 0 && a[x + 4][y - 4] == 0)
+			return 1;
+	}
+
+	return 0;
+
+}
+int four_strike(int x, int y, int z)//只判断单方向即可，找最小的4连
+{
+	if (z == 1)
+	{
+		if (x + 3 < 19 && a[x][y] == a[x + 1][y] && a[x][y] == a[x + 2][y] && a[x][y] == a[x + 3][y])
+			return 1;
+	}
+	if (z == 2)
+	{
+		if (y + 3 < 19 && a[x][y] == a[x][y + 1] && a[x][y] == a[x][y + 2] && a[x][y] == a[x][y + 3])
+			return 1;
+	}
+	if (z == 3)
+	{
+		if (x + 3 < 19 && y + 3 < 19 && a[x][y] == a[x + 1][y + 1] && a[x][y] == a[x + 2][y + 2] && a[x][y] == a[x + 3][y + 3])
+			return 1;
+	}
+	if (z == 4)
+	{
+		if (x + 3 < 19 && y - 3 >= 0 && a[x][y] == a[x + 1][y - 1] && a[x][y] == a[x + 2][y - 2] && a[x][y] == a[x + 3][y - 3])
+			return 1;
+	}
+	return 0;
+}
+int judgesin(int x, int y)
+{
+	int z;
+
+	z = 1;
+	if (four_strike(x, y, z))
+		return z;
+
+	z = 2;
+	if (four_strike(x, y, z))
+		return z;
+	z = 3;
+	if (four_strike(x, y, z))
+		return z;
+	z = 4;
+	if (four_strike(x, y, z))
+		return z;
+
+
+	return 0;
+}
+int guocheng()
+{
+	int i, j;
+	for (i = 0; i < 19; i++)
+	{
+		for (j = 0; j < 19; j++)
+		{
+			if (a[i][j] == 1)
+			{
+				int z = judgesin(i, j);
+				if (z == 1 || z == 2 || z == 3 || z == 4)
+				{
+					if (bar_space(i, j, z))
+					{
+						printf("1\n%d\n%d %d\n", cnt, i + 1, j + 1);
+						return 1;
+					}
+				}
+			}
+			if (a[i][j] == 2)
+			{
+				int z = judgesin(i, j);
+				if (z == 1 || z == 2 || z == 3 || z == 4)
+				{
+					if (bar_space(i, j, z))
+					{
+						printf("2\n%d\n%d %d\n", cnt, i + 1, j + 1);
+						return 1;
+					}
+				}
+			}
+			if (a[i][j] == 0)continue;
+		}
+
+	}
+	puts("NO");
+	return 0;
+}
+int main()
+{
+	while (!feof(stdin))
+	{
+		cnt = 0;
+		int i, j;
+		for (i = 0; i < 19; i++)
+		{
+			for (j = 0; j < 19; j++)
+			{
+				scanf("%d", &a[i][j]);
+				cnt += a[i][j] == 1;
+			}
+		}
+		guocheng();
+		putchar('\n');
+	}
+	return 0;
+}
+```
 
 ## L 4405
+进行minimax对抗搜索+哈希记忆化即可。
 
+```C
+#include<stdio.h>
+#include<string.h>
+#include<ctype.h>
+typedef long long ll;
+#define max(a, b) (a > b ? a : b)
+#define min(a, b) (a < b ? a : b)
+#define mod 23333
+const int INF = 11;
+int rd()
+{
+	int k = 0, f = 1;
+	char c = getchar();
+	while (!isdigit(c))
+	{
+		if (c == '-')f = -1;
+		c = getchar();
+	}
+	while (isdigit(c))
+	{
+		k = (k << 1) + (k << 3) + c - 48;
+		c = getchar();
+	}
+	return k * f;
+}
+void wr(int x)
+{
+	if (x < 0) putchar('-'), x = -x;
+	if (x > 9)wr(x / 10);
+	putchar(x % 10 + '0');
+}
+int a[3][3];
+typedef enum result { Non_end, Alice, Bob, Draw } result;
+result trans(int a)
+{
+	result ret = Non_end;
+	switch (a)
+	{
+		case 0:
+			ret = Non_end;
+			break;
+		case 1:
+			ret = Alice;
+			break;
+		case 2:
+			ret = Bob;
+			break;
+		case 3:
+			ret = Draw;
+			break;
+		default:
+			break;
+	}
+	return ret;
+}
+result check()
+{
+	result ret = Non_end;
+	if (a[0][0] && a[0][0] == a[1][1] && a[1][1] == a[2][2])
+		ret = trans(a[0][0]);
+	else if (a[2][0] && a[2][0] == a[1][1] && a[1][1] == a[0][2])
+		ret = trans(a[2][0]);
+	else
+	{
+		for (int i = 0; i < 3 && ret == Non_end; ++i)
+			if (a[i][0] && a[i][0] == a[i][1] && a[i][1] == a[i][2])
+				ret = trans(a[i][0]);
+		for (int i = 0; i < 3 && ret == Non_end; ++i)
+			if (a[0][i] && a[0][i] == a[1][i] && a[1][i] == a[2][i])
+				ret = trans(a[0][i]);
+	}
+	if (ret != Non_end) return ret;
+
+	for (int i = 0; i < 3; ++i)
+		for (int j = 0; j < 3; ++j)
+			if (a[i][j] == 0)
+				return Non_end;
+	return Draw;
+}
+int f()
+{
+	int ret = 1;
+	for (int i = 0; i < 3; ++i)
+		for (int j = 0; j < 3; ++j)
+			ret += (a[i][j] == 0);
+	return ret;
+}
+//记忆化搜索
+typedef struct hash
+{
+	ll status;
+	int f;
+	int next;
+} hash;
+int hashcode(ll status)
+{
+	return status % mod;
+}
+hash node[65536];
+int head[mod], cnt_hash;
+int find(ll status)
+{
+	int code = hashcode(status);
+	for (int i = head[code]; i; i = node[i].next)
+		if (status == node[i].status)
+			return node[i].f;
+	return -1;
+}
+void add(ll status, int f)
+{
+	int code = hashcode(status);
+	node[++cnt_hash].status = status;
+	node[cnt_hash].f = f;
+	node[cnt_hash].next = head[code];
+	head[code] = cnt_hash;
+}
+ll get_status()
+{
+	ll ret = 0;
+	for (int i = 2; ~i; --i)
+		for (int j = 2; ~j; --j)
+			ret = (ret << 1) + (ret << 3) + a[i][j];
+	return ret;
+}
+//对抗搜索
+int dfs(int p)
+{
+	ll status = get_status();
+	int tmp = find(status);
+	if (tmp != -1) return tmp;
+	result res = check();
+	int ret = 0;
+	if (res == Alice)
+	{
+		ret = f();
+		add(status, ret);
+		return ret;
+	}
+	else if (res == Bob)
+	{
+		ret = -f();
+		add(status, ret);
+		return ret;
+	}
+	else if (res == Draw)
+	{
+		ret = 0;
+		add(status, ret);
+		return ret;
+	}
+	else
+	{
+		//min-max搜索部分
+		int minp = INF, maxp = -INF;
+		for (int i = 0; i < 3; ++i)
+		{
+			for (int j = 0; j < 3; ++j)
+			{
+				if (a[i][j]) continue;
+				a[i][j] = p;//搜索:当前位执子下p
+				int nxt = dfs(p == 1 ? 2 : 1);//轮换下棋
+				if (p == 1) maxp = max(maxp, nxt);//先手-我方
+				else minp = min(minp, nxt);//后手-对方
+				a[i][j] = 0;//回溯
+			}
+		}
+		if (p == 1) ret = maxp;
+		else ret = minp;
+		add(status, ret);
+		return ret;
+	}
+}
+int t;
+int offensive;
+int main()
+{
+	while (!feof(stdin))
+	{
+		//memset(head, 0, sizeof(head)), cnt_hash = 0;
+		offensive = rd();
+		for (int i = 0; i < 3; ++i)
+			for (int j = 0; j < 3; ++j)
+				a[i][j] = rd();
+		wr(dfs(offensive)), putchar('\n');
+		putchar('\n');
+	}
+}
+```
 
 ## M 4402
+直接暴力搜索即可。
 
+```C
+#include<stdio.h>
+#include<string.h>
+#include<stdbool.h>
+#define max(a, b) ((a) > (b) ? (a) : (b))
+int m, n;
+char s[8][8];
+char pattern[15][15];
+char tmp[15];
+bool vis[8][8];
+int ans;
+
+int calc()
+{
+	int ret = 0;
+	for (int i = 1; i <= m; ++i) ret += strstr(tmp + 1, pattern[i] + 1) != NULL;
+	return ret;
+}
+
+void dfs(int x, int y, int step)
+{
+	if (step == n)
+	{
+		ans = max(ans, calc());
+		return;
+	}
+	if (step & 1)
+	{
+		for (int nx = 1; nx <= 6; ++nx)
+		{
+			if (vis[nx][y]) continue;
+			vis[nx][y] = 1, tmp[step + 1] = s[nx][y];
+			dfs(nx, y, step + 1);
+			vis[nx][y] = 0, tmp[step + 1] = '\0';
+		}
+	}
+	else
+	{
+		for (int ny = 1; ny <= 6; ++ny)
+		{
+			if (vis[x][ny]) continue;
+			vis[x][ny] = 1, tmp[step + 1] = s[x][ny];
+			dfs(x, ny, step + 1);
+			vis[x][ny] = 0, tmp[step + 1] = '\0';
+		}
+	}
+}
+
+
+int main()
+{
+	scanf("%d%d", &m, &n);
+	for (int i = 1; i <= 6; ++i) scanf("%s", s[i] + 1);
+	for (int i = 1; i <= m; ++i) scanf("%s", pattern[i] + 1);
+
+	for (int i = 1; i <= 6; ++i) vis[1][i] = 1, tmp[1] = s[1][i], dfs(1, i, 1), tmp[1] = '\0';
+	printf("%d", ans);
+}
+```
 
 ## N 4403
 
