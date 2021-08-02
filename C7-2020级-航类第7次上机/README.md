@@ -144,45 +144,42 @@ int main() {
 #### 示例代码
 
 ```c
-#include <stdio.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include<stdio.h>
+#include<stdio.h>
+#include<stdlib.h>
 
 int PrimeTab[50000] = {2, 3, 5, 7};
 int PrimeIndex = 4;
-int GetPrimeTab(int *PrimeTable, int *TabIndex, int Max)
+
+void GetPrimeTab(int *TabIndex, int Max)
 {
-	int i = 0;
-	int j = 0;
+	int i;
+	int j;
 	for (i = 8; i <= Max; i++)
-
 	{
-
 		int IsPrime = 1;
 		for (j = 0; PrimeTab[j] * PrimeTab[j] <= i; j++)
-
 		{
 			if (i % PrimeTab[j] == 0)
-
 			{
 				IsPrime = 0;
 				break;
 			}
 		}
 		if (IsPrime)
-
 		{
 			PrimeTab[*TabIndex] = i;
 			(*TabIndex) += 1;
 		}
 	}
 }
+
 int Check(int *PrimeTable, int TabIndex, int a)
 {
 	int Sum = 0;
 	int b = 0;
 	int a1 = a;
-	int i = 0;
+	int i;
 	while (a1)
 	{
 		b += a1 % 10;
@@ -193,7 +190,8 @@ int Check(int *PrimeTable, int TabIndex, int a)
 		if (a % PrimeTable[i] == 0)
 		{
 			Sum += PrimeTable[i];
-			if(Sum>b){
+			if(Sum>b)
+			{
 				return 0;
 			}
 		}
@@ -204,20 +202,16 @@ int Check(int *PrimeTable, int TabIndex, int a)
 int main()
 {
 	int Input = 0;
-	int i = 2;
-	GetPrimeTab(PrimeTab, &PrimeIndex, 50000);
+	int i;
+	GetPrimeTab(&PrimeIndex, 50000);
 	scanf("%d", &Input);
 	for (i = 2; i < Input; i++)
-
 	{
-
 		if (Check(PrimeTab, PrimeIndex, i))
-
 		{
 			printf("%d\n", i);
 		}
 	}
-
 	return 0;
 }
 ```
@@ -264,42 +258,50 @@ int main(){
 ``` c
 #include<stdio.h>
 
-void Swap(int *a, int *b) {
-    int temp;
-    temp = *a;
-    *a = *b;
-    *b = temp;
+void Swap(int *a, int *b)
+{
+	int temp;
+	temp = *a;
+	*a = *b;
+	*b = temp;
 }
 
-int main() {
-    int w[100], v[100], per_value[100];
-    int m, n, i;
-    scanf("%d%d", &m, &n);
-    for (i = 0; i < n; i++) {
-        scanf("%d%d", &w[i], &v[i]);
-        per_value[i] = v[i] / w[i];
-    }
-    int p = n, temp;
-    while (p--) {
-        for (i = 0; i < p; i++) {
-            if (per_value[i] < per_value[i + 1]) {
-                Swap(&per_value[i], &per_value[i + 1]);
-                Swap(&w[i], &w[i + 1]);
-                Swap(&v[i], &v[i + 1]);
-            }
-        }
-    }
-    int cnt = 0, sum = 0;
-    for (i = 0; i < n && cnt < m;) {
-        w[i]--;
-        cnt++;
-        sum += per_value[i];
-        if (w[i] == 0) {
-            i++;
-        }
-    }
-    printf("%d", sum);
-    return 0;
+int main()
+{
+	int w[100], v[100], per_value[100];
+	int m, n, i;
+	scanf("%d%d", &m, &n);
+	for (i = 0; i < n; i++)
+	{
+		scanf("%d%d", &w[i], &v[i]);
+		per_value[i] = v[i] / w[i];
+	}
+	int p = n;
+	while (p--)
+	{
+		for (i = 0; i < p; i++)
+		{
+			if (per_value[i] < per_value[i + 1])
+			{
+				Swap(&per_value[i], &per_value[i + 1]);
+				Swap(&w[i], &w[i + 1]);
+				Swap(&v[i], &v[i + 1]);
+			}
+		}
+	}
+	int cnt = 0, sum = 0;
+	for (i = 0; i < n && cnt < m;)
+	{
+		w[i]--;
+		cnt++;
+		sum += per_value[i];
+		if (w[i] == 0)
+		{
+			i++;
+		}
+	}
+	printf("%d", sum);
+	return 0;
 }
 ```
 
@@ -308,15 +310,15 @@ int main() {
 读完题之后，就是简单的填空题，基本无需解释。
 
 ```c
-#include <stdio.h>
-#include <math.h>
+#include<stdio.h>
+#include<math.h>
 
 long long FastPower(long long base,long long exponent)
 {
 	long long power=1;
-	for(;exponent!=0;exponent>>=1)
+	for(; exponent!=0; exponent>>=1)
 	{
-		if(exponent&1==1)
+		if(exponent&(1==1))
 		{
 			power=power*base%998244353;
 		}
@@ -337,7 +339,7 @@ long long Det(long long n)
 		long long i;
 		for(i=k+1; i<n; i++)
 		{
-			if(abs(A[i][k])>abs(A[maxr][k]))
+			if(llabs(A[i][k])>llabs(A[maxr][k]))
 			{
 				maxr=i;
 			}
@@ -384,14 +386,17 @@ int main()
 	int n;
 	scanf("%d",&n);
 	int i;
-	for(i=0;i<n;i++)
+	for(i=0; i<n; i++)
 	{
 		int j;
-		for(j=0;j<n;j++)
+		for(j=0; j<n; j++)
 		{
 			scanf("%lld",&A[i][j]);
-                        while(A[i][j] < 0)A[i][j] += 998244353;
-                        A[i][j] %= 998244353;
+			while(A[i][j] < 0)
+			{
+				A[i][j] += 998244353;
+			}
+			A[i][j] %= 998244353;
 		}
 	}
 	long long ans=Det(n);
