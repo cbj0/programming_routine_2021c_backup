@@ -100,23 +100,26 @@ int main() {
 ### 示例代码
 
 ```c
-#include <stdio.h>
+#include<stdio.h>
 
-void print_bin(long long n, int bits) {
-    if (bits) {
-        print_bin(n >> 1, bits - 1);
-        printf("%lld", n & 1);
-    }
+void print_bin(long long n, int bits)
+{
+	if (bits)
+	{
+		print_bin(n >> 1, bits - 1);
+		printf("%lld", n & 1);
+	}
 }
 
-int main(int argc, const char * argv[]) {
-    
-    long long n;
-    while (~scanf("%lld", &n)) {
-        print_bin(n, 64);
-        printf("\n");
-    }
-    return 0;
+int main()
+{
+	long long n;
+	while (~scanf("%lld", &n))
+	{
+		print_bin(n, 64);
+		printf("\n");
+	}
+	return 0;
 }
 ```
 
@@ -314,18 +317,16 @@ int main(void) {
 ### 示例代码
 
 ```c
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+#include<stdio.h>
+#include<string.h>
+#include<stdlib.h>
 
 struct Person
 {
-    char SelfName[20];
-    char FatherName[20];
-    int Generation;
-    struct Person *Next;
-    struct Person *Previous;
-
+	char SelfName[20];
+	char FatherName[20];
+	struct Person *Next;
+	struct Person *Previous;
 };
 
 struct Person *Head = NULL;
@@ -333,121 +334,119 @@ struct Person *Tail = NULL;
 
 void RenewTheList()
 {
-    struct Person *EndPtr = Tail->Previous;
-    while (EndPtr->Previous!= NULL)
-    {
-        if (strcmp(EndPtr->FatherName, EndPtr->Previous->SelfName) != 0)
-        {
-            struct Person *HeadPtr = Head;
-            while (HeadPtr->Next != NULL)
-            {
-                if (strcmp(EndPtr->FatherName, HeadPtr->SelfName) == 0)
-                {
-                    EndPtr->Next->Previous = EndPtr->Previous;
-                    EndPtr->Previous->Next = EndPtr->Next;
-                    if (EndPtr->Next==NULL)
-                    {
-                        Tail=EndPtr->Previous;
-                    }
-                    EndPtr->Previous = HeadPtr;
-                    EndPtr->Next = HeadPtr->Next;
-                    HeadPtr->Next->Previous = EndPtr;
-                    HeadPtr->Next = EndPtr;
-                    EndPtr=Tail;
-                    break;
-                }
-                HeadPtr = HeadPtr->Next;
-            }
-        }
-        EndPtr = EndPtr->Previous;
-    }
-    if (Head->Next->Next&&(Head->SelfName,Head->Next->FatherName)!=0){
-        struct Person* NewHead=Head;
-        struct Person *HeadPtr = Head;
-            while (HeadPtr->Next != NULL)
-            {
-                if (strcmp(Head->FatherName, HeadPtr->SelfName) == 0)
-                {   
-                    NewHead=Head->Next;
-                    Head->Next->Previous = Head->Previous;
-                    Head->Previous = HeadPtr;
-                    Head->Next = HeadPtr->Next;
-                    HeadPtr->Next->Previous = Head;
-                    HeadPtr->Next = Head;
-                    break;
-                }
-                HeadPtr = HeadPtr->Next;
-            }
-            Head=NewHead;
-    }
-    return;
+	struct Person *EndPtr = Tail->Previous;
+	while (EndPtr->Previous!= NULL)
+	{
+		if (strcmp(EndPtr->FatherName, EndPtr->Previous->SelfName) != 0)
+		{
+			struct Person *HeadPtr = Head;
+			while (HeadPtr->Next != NULL)
+			{
+				if (strcmp(EndPtr->FatherName, HeadPtr->SelfName) == 0)
+				{
+					EndPtr->Next->Previous = EndPtr->Previous;
+					EndPtr->Previous->Next = EndPtr->Next;
+					if (EndPtr->Next==NULL)
+					{
+						Tail=EndPtr->Previous;
+					}
+					EndPtr->Previous = HeadPtr;
+					EndPtr->Next = HeadPtr->Next;
+					HeadPtr->Next->Previous = EndPtr;
+					HeadPtr->Next = EndPtr;
+					EndPtr=Tail;
+					break;
+				}
+				HeadPtr = HeadPtr->Next;
+			}
+		}
+		EndPtr = EndPtr->Previous;
+	}
+	if (Head->Next->Next&&(Head->SelfName,Head->Next->FatherName)!=0)
+	{
+		struct Person* NewHead=Head;
+		struct Person *HeadPtr = Head;
+		while (HeadPtr->Next != NULL)
+		{
+			if (strcmp(Head->FatherName, HeadPtr->SelfName) == 0)
+			{
+				NewHead=Head->Next;
+				Head->Next->Previous = Head->Previous;
+				Head->Previous = HeadPtr;
+				Head->Next = HeadPtr->Next;
+				HeadPtr->Next->Previous = Head;
+				HeadPtr->Next = Head;
+				break;
+			}
+			HeadPtr = HeadPtr->Next;
+		}
+		Head=NewHead;
+	}
+	return;
 }
 
 struct Person *CheckExist(char *FatherName)
 {
-
-    if (Head->Next == NULL)
-    {
-        return NULL;
-    }
-    struct Person *Ptr = Head;
-    while (Ptr != NULL)
-    {
-        if (strcmp(Ptr->SelfName, FatherName) == 0)
-        {
-            return Ptr;
-        }
-        Ptr = Ptr->Next;
-    }
-    return NULL;
-    
+	if (Head->Next == NULL)
+	{
+		return NULL;
+	}
+	struct Person *Ptr = Head;
+	while (Ptr != NULL)
+	{
+		if (strcmp(Ptr->SelfName, FatherName) == 0)
+		{
+			return Ptr;
+		}
+		Ptr = Ptr->Next;
+	}
+	return NULL;
 }
 
 int main()
 {
-        Head = (struct Person *)malloc(sizeof(struct Person));
-        Head->Next = NULL;
-        Head->Previous = NULL;
-        Tail = Head;
-        char Self[20] = {};
-        char Father[20] = {};
-
-        while (~scanf("%s %s", Self, Father))
-        {   
-            char c=0;
-            while ((c=getchar() )!= '\n'&&c!=-1);
-            struct Person *Check = CheckExist(Father);
-            if (Check != NULL)
-            {
-                struct Person *Temp = (struct Person *)malloc(sizeof(struct Person));
-                Temp->Next = Check->Next;
-                Temp->Previous = Check;
-                Check->Next = Temp;
-                Temp->Next->Previous = Temp;
-                strcpy(Temp->SelfName, Self);
-                strcpy(Temp->FatherName, Father);
-            }
-            else
-            {
-                struct Person *Temp = (struct Person *)malloc(sizeof(struct Person));
-                Temp->Previous = Tail;
-                Temp->Next = NULL;
-                Tail->Next=Temp;
-                strcpy(Tail->SelfName, Self);
-                strcpy(Tail->FatherName, Father);
-                Tail=Temp;
-            }
-        }
-    RenewTheList();
-    struct Person *PrintPtr = Head;
-    while (PrintPtr->Next!=NULL)
-    {
-        printf("%s %s\n",PrintPtr->SelfName,PrintPtr->FatherName);
-        PrintPtr=PrintPtr->Next;
-        free(PrintPtr->Previous);
-        PrintPtr->Previous=NULL;
-    }
-    return 0;
+	Head = (struct Person *)malloc(sizeof(struct Person));
+	Head->Next = NULL;
+	Head->Previous = NULL;
+	Tail = Head;
+	char Self[20] = {};
+	char Father[20] = {};
+	while (~scanf("%s %s", Self, Father))
+	{
+		char c;
+		while ((c=getchar() )!= '\n'&&c!=-1);
+		struct Person *Check = CheckExist(Father);
+		if (Check != NULL)
+		{
+			struct Person *Temp = (struct Person *)malloc(sizeof(struct Person));
+			Temp->Next = Check->Next;
+			Temp->Previous = Check;
+			Check->Next = Temp;
+			Temp->Next->Previous = Temp;
+			strcpy(Temp->SelfName, Self);
+			strcpy(Temp->FatherName, Father);
+		}
+		else
+		{
+			struct Person *Temp = (struct Person *)malloc(sizeof(struct Person));
+			Temp->Previous = Tail;
+			Temp->Next = NULL;
+			Tail->Next=Temp;
+			strcpy(Tail->SelfName, Self);
+			strcpy(Tail->FatherName, Father);
+			Tail=Temp;
+		}
+	}
+	RenewTheList();
+	struct Person *PrintPtr = Head;
+	while (PrintPtr->Next!=NULL)
+	{
+		printf("%s %s\n",PrintPtr->SelfName,PrintPtr->FatherName);
+		PrintPtr=PrintPtr->Next;
+		free(PrintPtr->Previous);
+		PrintPtr->Previous=NULL;
+	}
+	return 0;
 }
 ```
 
@@ -545,8 +544,10 @@ int main()
 ### 示例代码
 
 ```c
-#include <stdio.h>
-int mat[9][9] = {
+#include<stdio.h>
+
+int mat[9][9] =
+{
 	{0,0,0,0,0,0,0,0,0},
 	{0,0,0,0,0,0,0,0,0},
 	{0,0,0,0,0,0,0,0,0},
@@ -557,49 +558,70 @@ int mat[9][9] = {
 	{0,0,0,0,0,0,0,0,0},
 	{0,0,0,0,0,0,0,0,0}
 };
-int check(int x,int y,int num){
+
+int check(int x,int y,int num)
+{
 	int i,j,gx = x / 3,gy = y / 3;
-	for(i = 0;i < 9;i++){
-		if(mat[x][i] == num && i != y){
+	for(i = 0; i < 9; i++)
+	{
+		if(mat[x][i] == num && i != y)
+		{
 			return 0;
 		}
 	}
-	for(i = 0;i < 9;i++){
-		if(mat[i][y] == num && i != x){
+	for(i = 0; i < 9; i++)
+	{
+		if(mat[i][y] == num && i != x)
+		{
 			return 0;
 		}
 	}
-	for(i = gx * 3;i < gx * 3 + 3;i++){
-		for(j = gy * 3;j < gy * 3 + 3;j++){
-			if(mat[i][j] == num && (i != x || j != y)){
+	for(i = gx * 3; i < gx * 3 + 3; i++)
+	{
+		for(j = gy * 3; j < gy * 3 + 3; j++)
+		{
+			if(mat[i][j] == num && (i != x || j != y))
+			{
 				return 0;
 			}
 		}
 	}
 	return 1;
 }
-void dfs(int x,int y){
+
+void dfs(int x,int y)
+{
 	int i,j;
-	if(x >= 9){//填完整个表了
-		for(i = 0;i < 9;i++){
-			for(j = 0;j < 9;j++){
+	if(x >= 9) //填完整个表了
+	{
+		for(i = 0; i < 9; i++)
+		{
+			for(j = 0; j < 9; j++)
+			{
 				printf("%d ",mat[i][j]);
 			}
 			putchar('\n');
 		}
 		return;
 	}
-	else{//x<=8
-		if(y >= 9){//填完一行了
+	else //x<=8
+	{
+		if(y >= 9) //填完一行了
+		{
 			dfs(x + 1,0);
 		}
-		else{
-			if(mat[x][y]){//填完当前位置了
+		else
+		{
+			if(mat[x][y]) //填完当前位置了
+			{
 				dfs(x,y + 1);
 			}
-			else{
-				for(i = 1;i <= 9;i++){
-					if(check(x,y,i)){
+			else
+			{
+				for(i = 1; i <= 9; i++)
+				{
+					if(check(x,y,i))
+					{
 						mat[x][y] = i;
 						dfs(x,y + 1);
 						mat[x][y] = 0;
@@ -609,10 +631,14 @@ void dfs(int x,int y){
 		}
 	}
 }
-int main(int argc,char **argv){
+
+int main()
+{
 	int i,j;
-	for(i = 0;i < 9;i++){
-		for(j = 0;j < 9;j++){
+	for(i = 0; i < 9; i++)
+	{
+		for(j = 0; j < 9; j++)
+		{
 			scanf("%d",&mat[i][j]);
 		}
 	}
