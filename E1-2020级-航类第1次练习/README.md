@@ -44,67 +44,91 @@ int main ()
 建议同学们熟悉一下C语言的库函数，能帮助节省很多时间。
 
 ```c
-
 #include<stdio.h>
-int main(){
-    int m=0,n=0;
-    int M=0,N=0;
-    while (scanf("%d %d",&m,&n)!=EOF)
-    {   
-        int GCD=0;
-        int Max=0,Min=0;
-        if(n<0){
-            n*=-1;
-            m*=-1;
-        }
-        
-        if (m<0)M=-m;
-        else M=m;
-        if (N<0)N=-n;
-        else N=n;
 
-        if(m%n==0){
-            printf("%d\n",m/n);
-        }else{
-            if(M/N==0){
-                if(M>=N){
-                    Max=M;
-                    Min=N;
-                }else{
-                    Max=N;
-                    Min=M;
-                }
-                while(Min){
-                    int Temp=Max%Min;
-                    Max=Min;
-                    Min=Temp;
-                }
-                GCD=Max;
-                printf("%d/%d\n",m/GCD,n/GCD);
-            }else{
-                int Integer=m/n;
-                m-=n*Integer;
-                if(M>=N){
-                    Max=M;
-                    Min=N;
-                }else{
-                    Max=N;
-                    Min=M;
-                }
-                while(Min){
-                    int Temp=Max%Min;
-                    Max=Min;
-                    Min=Temp;
-                }
-                GCD=Max;
-                printf("%d%+d/%d\n",Integer,m/GCD,n/GCD);
-            }
-        }
-    }
-
-    return 0;
+int main()
+{
+	int m=0,n=0;
+	int M,N=0;
+	while (scanf("%d %d",&m,&n)!=EOF)
+	{
+		int GCD;
+		int Max,Min;
+		if(n<0)
+		{
+			n*=-1;
+			m*=-1;
+		}
+		if (m<0)
+		{
+			M=-m;
+		}
+		else
+		{
+			M=m;
+		}
+		if (N<0)
+		{
+			N=-n;
+		}
+		else
+		{
+			N=n;
+		}
+		if(m%n==0)
+		{
+			printf("%d\n",m/n);
+		}
+		else
+		{
+			if(M/N==0)
+			{
+				if(M>=N)
+				{
+					Max=M;
+					Min=N;
+				}
+				else
+				{
+					Max=N;
+					Min=M;
+				}
+				while(Min)
+				{
+					int Temp=Max%Min;
+					Max=Min;
+					Min=Temp;
+				}
+				GCD=Max;
+				printf("%d/%d\n",m/GCD,n/GCD);
+			}
+			else
+			{
+				int Integer=m/n;
+				m-=n*Integer;
+				if(M>=N)
+				{
+					Max=M;
+					Min=N;
+				}
+				else
+				{
+					Max=N;
+					Min=M;
+				}
+				while(Min)
+				{
+					int Temp=Max%Min;
+					Max=Min;
+					Min=Temp;
+				}
+				GCD=Max;
+				printf("%d%+d/%d\n",Integer,m/GCD,n/GCD);
+			}
+		}
+	}
+	return 0;
 }
-
 ```
 
 
@@ -243,27 +267,43 @@ https://www.bilibili.com/video/BV1Zv411b7vS/
 
 直接模拟每一秒的状态/电梯一个上下循环的状态显然不会是最优解，因为电梯何时能接到小迷弟是可以直接计算出来的。首先我们先计算出电梯从1层出发到楼顶再回到1层的时间发现是period=(m-1)<<1;这样我们可以计算出小迷弟出场前电梯能运行多少个周期，这些周期肯定无用，我们需要的是这些周期过后，离小迷弟出场还有多长时间，比如经过若N个周期，还有T秒小迷弟出场，根据之前的说法N+1个周期结束时小迷弟早已出场，故现在的时间是N*period。接下来我们需要根据s和t的大小来判断需要上行接到小迷弟还是下行接到小迷弟。显然s==t时，小迷弟不需要坐电梯！！！于是直接输出n即可。s<t时，电梯上行接到小迷弟，所以从1到s需要s-1秒，s>t时电梯要下行，故需要m-1+m-s=period+1-s秒，此时接到小迷弟，再需要s和t的距离的时间貌似就可以到达目的地了（s到t的距离可以通过判断s和t的大小分类讨论 也可以用abs绝对值函数）。但是还有一个问题这样的时间可能还没有n大 所以我们判断一下，如果比n小则还需要等一个周期，于是这种情况下再加一个周期即可。
 ```c
-#include <stdio.h>
-#include <math.h>
+#include<stdio.h>
+#include<math.h>
 
 long long n,maxv,s,t,n,mm;
-int main(){ 
+
+int main()
+{
 	scanf("%lld",&maxv);
-	mm=(maxv-1)*2;//电梯上下一个周期的时间 
+	mm=(maxv-1)*2;//电梯上下一个周期的时间
 	scanf("%lld %lld %lld",&s,&t,&n);
-	if(s==t){
-	    printf("%lld\n",n);//小迷弟那都不用去直接到包房 
+	if(s==t)
+	{
+		printf("%lld\n",n);//小迷弟那都不用去直接到包房
 	}
-    else{
-    	long long tmp1,tmp2;
-    	if(s<t) tmp1=s-1;//电梯从1楼向上接到小迷弟 
-    	else tmp1=mm+1-s;//电梯从maxv层向下接到小迷弟 
-    	long long tmp3=n/mm*mm+tmp1;//n秒之前电梯跑过n/mm*mm次轮回 又花了tmp1的时间接小迷弟 
-		if(tmp3<n) tmp2=tmp3+mm;//但是仍有可能小于n 如果小于n必须加个周期才能保证在小迷弟出现之后接到小迷弟 
-		else tmp2=tmp3;
-		printf("%lld\n",tmp2+abs(s-t));//再走两者的距离 
-    }
-  	return 0;
+	else
+	{
+		long long tmp1,tmp2;
+		if(s<t)
+		{
+			tmp1=s-1;//电梯从1楼向上接到小迷弟
+		}
+		else
+		{
+			tmp1=mm+1-s;//电梯从maxv层向下接到小迷弟
+		}
+		long long tmp3=n/mm*mm+tmp1;//n秒之前电梯跑过n/mm*mm次轮回 又花了tmp1的时间接小迷弟
+		if(tmp3<n)
+		{
+			tmp2=tmp3+mm;//但是仍有可能小于n 如果小于n必须加个周期才能保证在小迷弟出现之后接到小迷弟
+		}
+		else
+		{
+			tmp2=tmp3;
+		}
+		printf("%lld\n",tmp2+llabs(s-t));//再走两者的距离
+	}
+	return 0;
 }
 ```
 
