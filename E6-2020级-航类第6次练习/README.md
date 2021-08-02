@@ -563,7 +563,6 @@ int main(){
 ###示例代码
 
 ```C
-
 #include<stdio.h>
 
 struct CinderLuca
@@ -601,9 +600,9 @@ struct CinderLuca FastPower(struct CinderLuca base,long long exponent)
 	struct CinderLuca power;
 	power.Luca=2;
 	power.Cinder=0;
-	for(;exponent!=0;exponent>>=1)
+	for(; exponent!=0; exponent>>=1)
 	{
-		if(exponent&1==1)
+		if(exponent&(1==1))
 		{
 			power=Mult(power,base);
 		}
@@ -644,7 +643,6 @@ int main()
 	}
 	printf("%lld %lld\n",ans.Luca,ans.Cinder);
 }
-
 ```
 
 ## `K` 4289 小迷弟磕cp
