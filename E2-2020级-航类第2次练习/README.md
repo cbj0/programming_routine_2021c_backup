@@ -312,151 +312,162 @@ int main()
 ```c
 #include<stdio.h>
 
-int main(){
-    int Dec[42]={};//十进制结果
-    int DecLength=1;//十进制结果长度
-    unsigned long long AHigh,ALow;
-    unsigned long long BHigh,BLow;
-    unsigned long long CLow=0x0;
-    unsigned long long CHigh=0x0;
-    scanf("%llu%llu%llu%llu",&AHigh,&ALow,&BHigh,&BLow);
-    /*------------全加器------------*/
-    
-    
-    unsigned long long CarryLow=0; //低位进位数纪录变量
-    for(int Index=0;Index<64;Index++){
-        CarryLow=CarryLow<<1;
-        unsigned long long ToolNum=1;
-        ToolNum=ToolNum<<Index;
-        CLow|=ToolNum&(ALow^BLow^CarryLow);
-        CarryLow=(ToolNum&((ALow&BLow)|(CarryLow&BLow)|(ALow&CarryLow)));
-    }
-    unsigned long long CarryHigh=CarryLow>>63; //高位进位数纪录变量，转存低位结果
-    for(int Index=0;Index<64;Index++){
-        unsigned long long ToolNum=1;
-        ToolNum=ToolNum<<Index;
-        CHigh|=ToolNum&(AHigh^BHigh^CarryHigh);
-        CarryHigh=(ToolNum&((AHigh&BHigh)|(CarryHigh&BHigh)|(AHigh&CarryHigh)))<<1;
-    }
-    unsigned long long IsLessThanZero=0;
-    
-    
-    /*-----------#全加器#-----------*/
-
-    if (CHigh==0&&CLow==0) //防止0减一取反
-    {
-        printf("%d",0);
-    }else if(CHigh==0x8000000000000000&&CLow==0x0){//防止最小数减一取反
-        printf("-170141183460469231731687303715884105728");
-    }else{
-    /*------------绝对值------------*/
-        IsLessThanZero=CHigh&0x8000000000000000;
-        if(IsLessThanZero){
-            if (CLow<1)
-            {
-                CHigh--; //高位借位
-                CLow=0xffffffffffffffff;//低位减一
-            }else{
-                CLow--; //低位减一
-            }
-            CLow=~CLow; //取反
-            CHigh=~CHigh;
-        }
-        
-    /*-----------#绝对值#-----------*/
-
-    /*------------十进制------------*/
-       
-        int BitToDec[42]={1}; //当前位二进制数的十进制权重
-        int LastBitToDec[42]={1};//上一位二进制数的十进制权重,没啥用
-        int LBDLenth=1;//没啥用
-        int TBDLenth=1;//当前位二进制数的十进制权重的数组长度
-        int LowCounter=0,HighCounter=0; //当前处理位的偏移量
-        unsigned long long ToolNumber=1; //用于截取某一位数字的工具数
-        while (LowCounter<64)
-        {
-            if (CLow&(ToolNumber<<LowCounter))
-            {   
-                /*-----向求和数中加上当前位的权重-----*/
-                for(int i=0;i<TBDLenth;i++){
-                    Dec[i]+=BitToDec[i];
-                    DecLength=i+1;
-                    if(Dec[i]>9){
-                        Dec[i]%=10;
-                        Dec[i+1]++;
-                        DecLength=i+2;
-                    }
-                }
-                /*-----#向求和数中加上当前位的权重#-----*/
-            }
-            LBDLenth=TBDLenth;
-            int WaitBit=0; //进位记录
-            /*-----权重乘2-----*/
-            for(int i=0;i<TBDLenth;i++){
-                LastBitToDec[i]=BitToDec[i];
-                BitToDec[i]*=2;
-                BitToDec[i]+=WaitBit;
-                WaitBit=0;
-                if(BitToDec[i]>9){
-                    WaitBit=BitToDec[i]/10;
-                    BitToDec[i]%=10;
-                    if(i==TBDLenth-1){
-                        TBDLenth++;
-                    }
-                }
-            }
-            /*-----#权重乘2#-----*/
-            
-            LowCounter++;
-        }
-        while (HighCounter<64)
-        {
-            if (CHigh&(ToolNumber<<HighCounter))
-            {
-                /*-----向求和数中加上当前位的权重-----*/
-                for(int i=0;i<TBDLenth;i++){
-                    Dec[i]+=BitToDec[i];
-                    DecLength=i+1;
-                    if(Dec[i]>9){
-                        Dec[i]%=10;
-                        Dec[i+1]++;
-                        DecLength=i+2;
-                    }
-                }
-                /*-----#向求和数中加上当前位的权重#-----*/
-            }
-            LBDLenth=TBDLenth;
-            int WaitBit=0;//进位记录
-            /*-----权重乘2-----*/
-            for(int i=0;i<TBDLenth;i++){
-                LastBitToDec[i]=BitToDec[i];
-                BitToDec[i]*=2;
-                BitToDec[i]+=WaitBit;
-                WaitBit=0;
-                if(BitToDec[i]>9){
-                    WaitBit=BitToDec[i]/10;
-                    BitToDec[i]%=10;
-                    if(i==TBDLenth-1){
-                        TBDLenth++;
-                    }
-                }
-            }
-            /*-----#权重乘2#-----*/
-            HighCounter++;
-            
-        }
-        
-    /*-----------#十进制#-----------*/
-    
-    if (IsLessThanZero)
-    {
-        putchar('-');
-    }
-    for(int i=DecLength-1;i>=0;i--){
-        printf("%d",Dec[i]);
-    }
-    }
-    return 0;
+int main()
+{
+	int Dec[42]= {}; //十进制结果
+	int DecLength=1;//十进制结果长度
+	unsigned long long AHigh,ALow;
+	unsigned long long BHigh,BLow;
+	unsigned long long CLow=0x0;
+	unsigned long long CHigh=0x0;
+	scanf("%llu%llu%llu%llu",&AHigh,&ALow,&BHigh,&BLow);
+	/*------------全加器------------*/
+	unsigned long long CarryLow=0; //低位进位数纪录变量
+	int Index;
+	for(Index=0; Index<64; Index++)
+	{
+		CarryLow=CarryLow<<1;
+		unsigned long long ToolNum=1;
+		ToolNum=ToolNum<<Index;
+		CLow|=ToolNum&(ALow^BLow^CarryLow);
+		CarryLow=(ToolNum&((ALow&BLow)|(CarryLow&BLow)|(ALow&CarryLow)));
+	}
+	unsigned long long CarryHigh=CarryLow>>63; //高位进位数纪录变量，转存低位结果
+	for(Index=0; Index<64; Index++)
+	{
+		unsigned long long ToolNum=1;
+		ToolNum=ToolNum<<Index;
+		CHigh|=ToolNum&(AHigh^BHigh^CarryHigh);
+		CarryHigh=(ToolNum&((AHigh&BHigh)|(CarryHigh&BHigh)|(AHigh&CarryHigh)))<<1;
+	}
+	unsigned long long IsLessThanZero;
+	/*-----------#全加器#-----------*/
+	if (CHigh==0&&CLow==0) //防止0减一取反
+	{
+		printf("%d",0);
+	}
+	else if(CHigh==0x8000000000000000&&CLow==0x0)  //防止最小数减一取反
+	{
+		printf("-170141183460469231731687303715884105728");
+	}
+	else
+	{
+		/*------------绝对值------------*/
+		IsLessThanZero=CHigh&0x8000000000000000;
+		if(IsLessThanZero)
+		{
+			if (CLow<1)
+			{
+				CHigh--; //高位借位
+				CLow=0xffffffffffffffff;//低位减一
+			}
+			else
+			{
+				CLow--; //低位减一
+			}
+			CLow=~CLow; //取反
+			CHigh=~CHigh;
+		}
+		/*-----------#绝对值#-----------*/
+		/*------------十进制------------*/
+		int BitToDec[42]= {1}; //当前位二进制数的十进制权重
+		int LastBitToDec[42]= {1}; //上一位二进制数的十进制权重,没啥用
+		int TBDLenth=1;//当前位二进制数的十进制权重的数组长度
+		int LowCounter=0,HighCounter=0; //当前处理位的偏移量
+		unsigned long long ToolNumber=1; //用于截取某一位数字的工具数
+		while (LowCounter<64)
+		{
+			if (CLow&(ToolNumber<<LowCounter))
+			{
+				/*-----向求和数中加上当前位的权重-----*/
+				for(int i=0; i<TBDLenth; i++)
+				{
+					Dec[i]+=BitToDec[i];
+					DecLength=i+1;
+					if(Dec[i]>9)
+					{
+						Dec[i]%=10;
+						Dec[i+1]++;
+						DecLength=i+2;
+					}
+				}
+				/*-----#向求和数中加上当前位的权重#-----*/
+			}
+			int WaitBit=0; //进位记录
+			/*-----权重乘2-----*/
+			int i;
+			for(i=0; i<TBDLenth; i++)
+			{
+				LastBitToDec[i]=BitToDec[i];
+				BitToDec[i]*=2;
+				BitToDec[i]+=WaitBit;
+				WaitBit=0;
+				if(BitToDec[i]>9)
+				{
+					WaitBit=BitToDec[i]/10;
+					BitToDec[i]%=10;
+					if(i==TBDLenth-1)
+					{
+						TBDLenth++;
+					}
+				}
+			}
+			/*-----#权重乘2#-----*/
+			LowCounter++;
+		}
+		while (HighCounter<64)
+		{
+			if (CHigh&(ToolNumber<<HighCounter))
+			{
+				/*-----向求和数中加上当前位的权重-----*/
+				int i;
+				for(i=0; i<TBDLenth; i++)
+				{
+					Dec[i]+=BitToDec[i];
+					DecLength=i+1;
+					if(Dec[i]>9)
+					{
+						Dec[i]%=10;
+						Dec[i+1]++;
+						DecLength=i+2;
+					}
+				}
+				/*-----#向求和数中加上当前位的权重#-----*/
+			}
+			int WaitBit=0;//进位记录
+			/*-----权重乘2-----*/
+			int i;
+			for(i=0; i<TBDLenth; i++)
+			{
+				LastBitToDec[i]=BitToDec[i];
+				BitToDec[i]*=2;
+				BitToDec[i]+=WaitBit;
+				WaitBit=0;
+				if(BitToDec[i]>9)
+				{
+					WaitBit=BitToDec[i]/10;
+					BitToDec[i]%=10;
+					if(i==TBDLenth-1)
+					{
+						TBDLenth++;
+					}
+				}
+			}
+			/*-----#权重乘2#-----*/
+			HighCounter++;
+		}
+		/*-----------#十进制#-----------*/
+		if (IsLessThanZero)
+		{
+			putchar('-');
+		}
+		int i;
+		for(i=DecLength-1; i>=0; i--)
+		{
+			printf("%d",Dec[i]);
+		}
+	}
+	return 0;
 }
 ```
 
@@ -465,171 +476,182 @@ int main(){
 ```c
 #include<stdio.h>
 
-int main(){
-    int Dec[42]={};//十进制结果
-    int DecLength=1;//十进制结果长度
-    unsigned long long AHigh,ALow;
-    unsigned long long BHigh,BLow;
-    unsigned long long CLow=0x0;
-    unsigned long long CHigh=0x0;
-    scanf("%llu%llu%llu%llu",&AHigh,&ALow,&BHigh,&BLow);
-    /*------------全加器------------*/
-    
-    
-    unsigned long long CarryLow=0; //低位进位数纪录变量
-    for(int Index=0;Index<64;Index++){
-        CarryLow=CarryLow<<1;
-        unsigned long long ToolNum=1;
-        ToolNum=ToolNum<<Index;
-        CLow|=ToolNum&(ALow^BLow^CarryLow);
-        CarryLow=(ToolNum&((ALow&BLow)|(CarryLow&BLow)|(ALow&CarryLow)));
-    }
-    unsigned long long CarryHigh=CarryLow>>63; //高位进位数纪录变量，转存低位结果
-    for(int Index=0;Index<64;Index++){
-        unsigned long long ToolNum=1;
-        ToolNum=ToolNum<<Index;
-        CHigh|=ToolNum&(AHigh^BHigh^CarryHigh);
-        CarryHigh=(ToolNum&((AHigh&BHigh)|(CarryHigh&BHigh)|(AHigh&CarryHigh)))<<1;
-    }
-    unsigned long long IsLessThanZero=0;
-    
-    
-    /*-----------#全加器#-----------*/
-
-    if (CHigh==0&&CLow==0) //防止0减一取反
-    {
-        printf("%d",0);
-    }else if(CHigh==0x8000000000000000&&CLow==0x0){//防止最小数减一取反
-        printf("-170141183460469231731687303715884105728");
-    }else{
-    /*------------绝对值------------*/
-        IsLessThanZero=CHigh&0x8000000000000000;
-        if(IsLessThanZero){
-            if (CLow<1)
-            {
-                CHigh--; //高位借位
-                CLow=0xffffffffffffffff;//低位减一
-            }else{
-                CLow--; //低位减一
-            }
-            CLow=~CLow; //取反
-            CHigh=~CHigh;
-        }
-        
-    /*-----------#绝对值#-----------*/
-
-    /*------------十进制------------*/
-       
-        int BitToDec[42]={0}; //当前位二进制数的十进制权重
-        int LastBitToDec[42]={0};//上一位二进制数的十进制权重,没啥用
-        int LBDLenth=1;//没啥用
-        int TBDLenth=1;//当前位二进制数的十进制权重的数组长度
-        int LowCounter=0,HighCounter=0; //当前处理位的偏移量
-        unsigned long long ToolNumber=1; //用于截取某一位数字的工具数
-        while (HighCounter<64)
-        {
-            if (CHigh&(ToolNumber<<(63-HighCounter)))
-            {
-                /*-----向当前最低位+1-----*/
-                int ForwardSave=0;
-                for(int i=0;i<TBDLenth;i++){
-                    BitToDec[i]+=ForwardSave;
-                    ForwardSave=0;
-                    BitToDec[i]++;
-                    if(BitToDec[i]>9){
-                        ForwardSave=1;
-                    }else{
-                        break;
-                    }
-                }
-                if (ForwardSave)
-                {
-                    BitToDec[TBDLenth]=1;
-                    ForwardSave=0;
-                    TBDLenth++;
-                }
-
-            }
-            /*-----#向当前最低位+1#-----*/
-            LBDLenth=TBDLenth;
-            int WaitBit=0;//进位记录
-            /*-----结果乘2-----*/
-            for(int i=0;i<TBDLenth;i++){
-                LastBitToDec[i]=BitToDec[i];
-                BitToDec[i]*=2;
-                BitToDec[i]+=WaitBit;
-                WaitBit=0;
-                if(BitToDec[i]>9){
-                    WaitBit=BitToDec[i]/10;
-                    BitToDec[i]%=10;
-                    if(i==TBDLenth-1){
-                        TBDLenth++;
-                    }
-                }
-            }
-            /*-----#结果乘2#-----*/
-            HighCounter++;
-            
-        }
-        while (LowCounter<64)
-        {
-            if (CLow&(ToolNumber<<(63-LowCounter)))
-            {   
-                /*-----向当前最低位+1-----*/
-                int ForwardSave=0;
-                for(int i=0;i<TBDLenth;i++){
-                    BitToDec[i]+=ForwardSave;
-                    ForwardSave=0;
-                    BitToDec[i]++;
-                    if(BitToDec[i]>9){
-                        ForwardSave=1;
-                    }else{
-                        break;
-                    }
-                }
-                if (ForwardSave)
-                {
-                    BitToDec[TBDLenth]=1;
-                    ForwardSave=0;
-                    TBDLenth++;
-                }
-            /*-----#向当前最低位+1#-----*/
-            }
-            LBDLenth=TBDLenth;
-            if(LowCounter<63){
-                int WaitBit=0; //进位记录
-                /*-----结果乘2-----*/
-                for(int i=0;i<TBDLenth;i++){
-                    LastBitToDec[i]=BitToDec[i];
-                    BitToDec[i]*=2;
-                    BitToDec[i]+=WaitBit;
-                    WaitBit=0;
-                    if(BitToDec[i]>9){
-                        WaitBit=BitToDec[i]/10;
-                        BitToDec[i]%=10;
-                        if(i==TBDLenth-1){
-                            TBDLenth++;
-                        }
-                    }
-                }
-            }
-            /*-----#结果乘2#-----*/
-            
-            LowCounter++;
-        }
-        
-        
-    /*-----------#十进制#-----------*/
-    
-    if (IsLessThanZero)
-    {
-        putchar('-');
-    }
-    for(int i=TBDLenth-1;i>=0;i--){
-        printf("%d",BitToDec[i]);
-    }
-    }
-    return 0;
+int main()
+{
+	unsigned long long AHigh,ALow;
+	unsigned long long BHigh,BLow;
+	unsigned long long CLow=0x0;
+	unsigned long long CHigh=0x0;
+	scanf("%llu%llu%llu%llu",&AHigh,&ALow,&BHigh,&BLow);
+	/*------------全加器------------*/
+	unsigned long long CarryLow=0; //低位进位数纪录变量
+	int Index;
+	for(Index=0; Index<64; Index++)
+	{
+		CarryLow=CarryLow<<1;
+		unsigned long long ToolNum=1;
+		ToolNum=ToolNum<<Index;
+		CLow|=ToolNum&(ALow^BLow^CarryLow);
+		CarryLow=(ToolNum&((ALow&BLow)|(CarryLow&BLow)|(ALow&CarryLow)));
+	}
+	unsigned long long CarryHigh=CarryLow>>63; //高位进位数纪录变量，转存低位结果
+	for(Index=0; Index<64; Index++)
+	{
+		unsigned long long ToolNum=1;
+		ToolNum=ToolNum<<Index;
+		CHigh|=ToolNum&(AHigh^BHigh^CarryHigh);
+		CarryHigh=(ToolNum&((AHigh&BHigh)|(CarryHigh&BHigh)|(AHigh&CarryHigh)))<<1;
+	}
+	unsigned long long IsLessThanZero;
+	/*-----------#全加器#-----------*/
+	if (CHigh==0&&CLow==0) //防止0减一取反
+	{
+		printf("%d",0);
+	}
+	else if(CHigh==0x8000000000000000&&CLow==0x0)  //防止最小数减一取反
+	{
+		printf("-170141183460469231731687303715884105728");
+	}
+	else
+	{
+		/*------------绝对值------------*/
+		IsLessThanZero=CHigh&0x8000000000000000;
+		if(IsLessThanZero)
+		{
+			if (CLow<1)
+			{
+				CHigh--; //高位借位
+				CLow=0xffffffffffffffff;//低位减一
+			}
+			else
+			{
+				CLow--; //低位减一
+			}
+			CLow=~CLow; //取反
+			CHigh=~CHigh;
+		}
+		/*-----------#绝对值#-----------*/
+		/*------------十进制------------*/
+		int BitToDec[42]= {0}; //当前位二进制数的十进制权重
+		int LastBitToDec[42]= {0}; //上一位二进制数的十进制权重,没啥用
+		int TBDLenth=1;//当前位二进制数的十进制权重的数组长度
+		int LowCounter=0,HighCounter=0; //当前处理位的偏移量
+		unsigned long long ToolNumber=1; //用于截取某一位数字的工具数
+		while (HighCounter<64)
+		{
+			if (CHigh&(ToolNumber<<(63-HighCounter)))
+			{
+				/*-----向当前最低位+1-----*/
+				int ForwardSave=0;
+				int i;
+				for(i=0; i<TBDLenth; i++)
+				{
+					BitToDec[i]+=ForwardSave;
+					ForwardSave=0;
+					BitToDec[i]++;
+					if(BitToDec[i]>9)
+					{
+						ForwardSave=1;
+					}
+					else
+					{
+						break;
+					}
+				}
+				if (ForwardSave)
+				{
+					BitToDec[TBDLenth]=1;
+					TBDLenth++;
+				}
+			}
+			/*-----#向当前最低位+1#-----*/
+			int WaitBit=0;//进位记录
+			/*-----结果乘2-----*/
+			int i;
+			for(i=0; i<TBDLenth; i++)
+			{
+				LastBitToDec[i]=BitToDec[i];
+				BitToDec[i]*=2;
+				BitToDec[i]+=WaitBit;
+				WaitBit=0;
+				if(BitToDec[i]>9)
+				{
+					WaitBit=BitToDec[i]/10;
+					BitToDec[i]%=10;
+					if(i==TBDLenth-1)
+					{
+						TBDLenth++;
+					}
+				}
+			}
+			/*-----#结果乘2#-----*/
+			HighCounter++;
+		}
+		while (LowCounter<64)
+		{
+			if (CLow&(ToolNumber<<(63-LowCounter)))
+			{
+				/*-----向当前最低位+1-----*/
+				int ForwardSave=0;
+				int i;
+				for(i=0; i<TBDLenth; i++)
+				{
+					BitToDec[i]+=ForwardSave;
+					ForwardSave=0;
+					BitToDec[i]++;
+					if(BitToDec[i]>9)
+					{
+						ForwardSave=1;
+					}
+					else
+					{
+						break;
+					}
+				}
+				if (ForwardSave)
+				{
+					BitToDec[TBDLenth]=1;
+					TBDLenth++;
+				}
+				/*-----#向当前最低位+1#-----*/
+			}
+			if(LowCounter<63)
+			{
+				int WaitBit=0; //进位记录
+				/*-----结果乘2-----*/
+				int i;
+				for(i=0; i<TBDLenth; i++)
+				{
+					LastBitToDec[i]=BitToDec[i];
+					BitToDec[i]*=2;
+					BitToDec[i]+=WaitBit;
+					WaitBit=0;
+					if(BitToDec[i]>9)
+					{
+						WaitBit=BitToDec[i]/10;
+						BitToDec[i]%=10;
+						if(i==TBDLenth-1)
+						{
+							TBDLenth++;
+						}
+					}
+				}
+			}
+			/*-----#结果乘2#-----*/
+			LowCounter++;
+		}
+		/*-----------#十进制#-----------*/
+		if (IsLessThanZero)
+		{
+			putchar('-');
+		}
+		int i;
+		for(i=TBDLenth-1; i>=0; i--)
+		{
+			printf("%d",BitToDec[i]);
+		}
+	}
+	return 0;
 }
 ```
 
@@ -723,55 +745,51 @@ int main()
 ```c
 #include <stdio.h>
 
-int main() {
-    
-    char a[100];
-    int len = 0;
-    scanf("%s", a); //读入一行字符串
-    for (len = 0; a[len] != '\0'; len++) //将各位数字字符转换为数值
-    {
-        a[len] -= '0';
-    }
-    
-    int k;
-    while (~scanf("%d", &k)) //循环读入k
-    {
+int main()
+{
+	char a[100];
+	int len;
+	scanf("%s", a); //读入一行字符串
+	for (len = 0; a[len] != '\0'; len++) //将各位数字字符转换为数值
+	{
+		a[len] -= '0';
+	}
+	int k;
+	while (~scanf("%d", &k)) //循环读入k
+	{
 		//计算bias = 2^(k - 1) - 1
-        int bias = 1;
-        for (int i = 0; i < k - 1; i++) 
-        {
-            bias *= 2;
-        }
-        bias -= 1;
-        
-        //计算E
-        double E = 0, b = 1;
-        for (int i = k; i >= 1; i--) 
-        {
-            E += a[i] * b;
-            b *= 2;
-        }
-        
-        //计算F
-        double F = 1;
-        b = 1.0 / 2;
-        for (int i = k + 1; i <= len; i++) 
-        {
-            F += a[i] * b;
-            b /= 2;
-        }
-        
-        //计算 x = (-1)^s * F * 2^(E-bias)
-        double x = (a[0] == 0 ? 1 : -1) * F, Eb = (E - bias) > 0 ? (E - bias) : (bias - E);
-        b = (E - bias) > 0 ? 2 : 0.5;
-        for (int i = 0; i < Eb; i++) 
-        {
-            x *= b;
-        }
-        
-        //输出
-        printf("%.8lf\n", x);
-    }
+		int bias = 1;
+		int i;
+		for (i = 0; i < k - 1; i++)
+		{
+			bias *= 2;
+		}
+		bias -= 1;
+		//计算E
+		double E = 0, b = 1;
+		for (i = k; i >= 1; i--)
+		{
+			E += a[i] * b;
+			b *= 2;
+		}
+		//计算F
+		double F = 1;
+		b = 1.0 / 2;
+		for (i = k + 1; i <= len; i++)
+		{
+			F += a[i] * b;
+			b /= 2;
+		}
+		//计算 x = (-1)^s * F * 2^(E-bias)
+		double x = (a[0] == 0 ? 1 : -1) * F, Eb = (E - bias) > 0 ? (E - bias) : (bias - E);
+		b = (E - bias) > 0 ? 2 : 0.5;
+		for (i = 0; i < Eb; i++)
+		{
+			x *= b;
+		}
+		//输出
+		printf("%.8lf\n", x);
+	}
 }
 ```
 
@@ -807,148 +825,132 @@ $$(1.f_{n-1}......f_1f_0)_2 \times 2^{(E-bias)}$$
 #### 示例代码
 
 ```c
-#include <stdio.h>
+#include<stdio.h>
 
 int main()
 {
-    char m[20];
-    while (~scanf("%s", m)) //循环读入二进制浮点数
-    {
-        /**
-         * 数组f用来存储二进制小数，开足够的空间来满足小数点的移动
-         * dot标记小数点所在的位置，即f[dot]是小数部分的最高位，起始位置为15
-         */
-        int bias = 15, f[40] = {0}, dot = 15;
-        
-        //将各位数字字符转换为数值
-        for (int i = 0; i < 16; i++)
-        {
-            m[i] -= '0';
-        }
-        
-        //判断特殊情况
-        int flag = 1;
-        //判断阶码是否为全1
-        for (int i = 1; i <= 5; i++)
-        {
-            if (m[i] == 0)
-            {
-                flag = 0;
-            }
-        }
-        if (flag) //如果阶码为全1
-        {
-            flag = 1;
-            //判断尾数是否为全1
-            for (int i = 6; i < 16; i++)
-            {
-                if (m[i] == 1)
-                {
-                    flag = 0;
-                }
-            }
-            if (flag) //如果是全1，输出正或负无穷
-            {
-                printf(m[0] == 0 ? "inf\n" : "-inf\n");
-            }
-            else //否则输出不是一个数
-            {
-                printf("NaN\n");
-            }
-            continue; //继续判断下一个数字
-        }
-        
-        //将尾数移到小数点后
-        for (int i = 0; i < 10; i++)
-        {
-            f[dot + i] = m[6 + i];
-        }
-        
-        //计算E的值
-        int E = 0, base = 1;
-        for (int i = 5; i >= 1; i--)
-        {
-            E += m[i] * base;
-            base *= 2;
-        }
-        
-        if (E == 0) //E为0说明阶码全为0，小数点应该移动 1-bias 位
-        {
-            E = 1 - bias;
-        }
-        else //否则小数点应该移动 E-bias 位，并且小数点前一位应该为1
-        {
-            E = E - bias;
-            f[dot - 1] = 1;
-        }
-        
-        dot = dot + E; //移动小数点
-        
-        int i = 0, a = 0, b = 0, j; /*变量i用来存储带分数的整数部分，a和b分别存储分子和分母*/
-        base = 1;
-        
-        //首先计算整数部分
-        for (j = dot - 1; j >= 0; j--)
-        {
-            i += f[j] * base;
-            base *= 2;
-        }
-        
-        //其次计算分母
-        j = 39;
-        while (f[j] == 0) //找到最后一位非0的小数
-        {
-            j--;
-        }
-        b = 1 << (j - dot + 1);
-        
-        //最后计算分子
-        base = 1;
-        while (j >= dot)
-        {
-            a += f[j--] * base;
-            base *= 2;
-        }
-        
-        //约分a和b
-        int x = a, y = b, gcd;
-        if(y)
-        {
-            while((x %= y) && (y %= x));
-        }
-        gcd = x + y;
-        a /= gcd;
-        b /= gcd;
-        
-        //输出整数部分
-        if (i)
-        {
-            printf(m[0] ? "-%d" : "%d", i);
-        }
-        
-        //输出分子分母
-        if (a)
-        {
-            if (m[0])
-            {
-                printf("-%d/%d", a, b);
-            }
-            else
-            {
-                printf(i ? "+%d/%d" : "%d/%d", a, b);
-            }
-        }
-        
-        //特殊判断是0的情况
-        if (i == 0 && a == 0)
-        {
-            printf("0");
-        }
-        
-        //换行
-        printf("\n");
-    }
-    
-    return 0;
+	char m[20];
+	while (~scanf("%s", m)) //循环读入二进制浮点数
+	{
+		//数组f用来存储二进制小数，开足够的空间来满足小数点的移动
+		//dot标记小数点所在的位置，即f[dot]是小数部分的最高位，起始位置为15
+		int bias = 15, f[40] = {0}, dot = 15;
+		//将各位数字字符转换为数值
+		int i;
+		for (i = 0; i < 16; i++)
+		{
+			m[i] -= '0';
+		}
+		//判断特殊情况
+		int flag = 1;
+		//判断阶码是否为全1
+		for (i = 1; i <= 5; i++)
+		{
+			if (m[i] == 0)
+			{
+				flag = 0;
+			}
+		}
+		if (flag) //如果阶码为全1
+		{
+			flag = 1;
+			//判断尾数是否为全1
+			for (i = 6; i < 16; i++)
+			{
+				if (m[i] == 1)
+				{
+					flag = 0;
+				}
+			}
+			if (flag) //如果是全1，输出正或负无穷
+			{
+				printf(m[0] == 0 ? "inf\n" : "-inf\n");
+			}
+			else //否则输出不是一个数
+			{
+				printf("NaN\n");
+			}
+			continue; //继续判断下一个数字
+		}
+		//将尾数移到小数点后
+		for (i = 0; i < 10; i++)
+		{
+			f[dot + i] = m[6 + i];
+		}
+		//计算E的值
+		int E = 0, base = 1;
+		for (i = 5; i >= 1; i--)
+		{
+			E += m[i] * base;
+			base *= 2;
+		}
+		if (E == 0) //E为0说明阶码全为0，小数点应该移动 1-bias 位
+		{
+			E = 1 - bias;
+		}
+		else //否则小数点应该移动 E-bias 位，并且小数点前一位应该为1
+		{
+			E = E - bias;
+			f[dot - 1] = 1;
+		}
+		dot = dot + E; //移动小数点
+		i=0;
+		int a = 0, b, j; /*变量i用来存储带分数的整数部分，a和b分别存储分子和分母*/
+		base = 1;
+		//首先计算整数部分
+		for (j = dot - 1; j >= 0; j--)
+		{
+			i += f[j] * base;
+			base *= 2;
+		}
+		//其次计算分母
+		j = 39;
+		while (f[j] == 0) //找到最后一位非0的小数
+		{
+			j--;
+		}
+		b = 1 << (j - dot + 1);
+		//最后计算分子
+		base = 1;
+		while (j >= dot)
+		{
+			a += f[j--] * base;
+			base *= 2;
+		}
+		//约分a和b
+		int x = a, y = b, gcd;
+		if(y)
+		{
+			while((x %= y) && (y %= x));
+		}
+		gcd = x + y;
+		a /= gcd;
+		b /= gcd;
+		//输出整数部分
+		if (i)
+		{
+			printf(m[0] ? "-%d" : "%d", i);
+		}
+		//输出分子分母
+		if (a)
+		{
+			if (m[0])
+			{
+				printf("-%d/%d", a, b);
+			}
+			else
+			{
+				printf(i ? "+%d/%d" : "%d/%d", a, b);
+			}
+		}
+		//特殊判断是0的情况
+		if (i == 0 && a == 0)
+		{
+			printf("0");
+		}
+		//换行
+		printf("\n");
+	}
+	return 0;
 }
 ```
