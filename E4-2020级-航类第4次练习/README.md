@@ -174,38 +174,47 @@ int main() {
 本题可以直接枚举所有方案，下面是枚举的做法，时间复杂度$O(n^2)$
 
 ```c
-#include <stdio.h>
+#include<stdio.h>
 
 long long value[10005];
 
-int main() {
-    int n, i, j, L, R;
-    long long cur, ans = -1;
-    int flag = 0;
-    while (scanf("%d", &n) != EOF) {
-        ans = -1;
-        for (i = 0; i < n; i++)
-            scanf("%lld", &value[i]);
-        for (i = 1; i < n; i++) {
-            for (j = i; j < n; j++) {
-                cur = value[j] - value[i - 1];
-                if (cur < 0)
-                    continue;
-                if (cur > ans) {
-                    flag = 0;
-                    ans = cur;
-                    L = i - 1;
-                    R = j;
-                } else if (cur == ans) {
-                    flag = 1;
-                }
-            }
-        }
-        if (ans <= 0)
-            printf("No profit!\n");
-        else
-            printf("%lld %d %d\n", ans, L + 1, R + 1);
-    }
+int main()
+{
+	int n, i, j, L, R;
+	long long cur, ans;
+	while (scanf("%d", &n) != EOF)
+	{
+		ans = -1;
+		for (i = 0; i < n; i++)
+		{
+			scanf("%lld", &value[i]);
+		}
+		for (i = 1; i < n; i++)
+		{
+			for (j = i; j < n; j++)
+			{
+				cur = value[j] - value[i - 1];
+				if (cur < 0)
+				{
+					continue;
+				}
+				if (cur > ans)
+				{
+					ans = cur;
+					L = i - 1;
+					R = j;
+				}
+			}
+		}
+		if (ans <= 0)
+		{
+			printf("No profit!\n");
+		}
+		else
+		{
+			printf("%lld %d %d\n", ans, L + 1, R + 1);
+		}
+	}
 }
 ```
 
@@ -313,37 +322,55 @@ int main() {
 char first[10010], second[10010], third[10010], tmp[10010];
 int n;
 
-int bigger(char a[], char b[]) {
-    int lena = strlen(a), lenb = strlen(b);
-    if (lena != lenb) return lena > lenb;//如果a的位数比b的位数大，那a一定比b大
-    //如果位数一致，直接从高到低比较 
-    //虽然是字符串 但是'0'到'9'的ASCII也是从小到大排列的，可以直接比较
-    int i = 0;
-    for (i = 0; i < lena; ++i) {
-        if (a[i] > b[i]) return 1;//大于
-        else if (a[i] < b[i]) return 0;//小于
-    }
-    return 0;//如果相等，a不大于b，需要返回0
+int bigger(char a[], char b[])
+{
+	int lena = strlen(a), lenb = strlen(b);
+	if (lena != lenb)
+	{
+		return lena > lenb;//如果a的位数比b的位数大，那a一定比b大
+	}
+	//如果位数一致，直接从高到低比较
+	//虽然是字符串 但是'0'到'9'的ASCII也是从小到大排列的，可以直接比较
+	int i;
+	for (i = 0; i < lena; ++i)
+	{
+		if (a[i] > b[i])
+		{
+			return 1;//大于
+		}
+		else if (a[i] < b[i])
+		{
+			return 0;//小于
+		}
+	}
+	return 0;//如果相等，a不大于b，需要返回0
 }
 
-int main() {
-    scanf("%d", &n);
-    while (n--) {
-        scanf("%s", tmp);
-        if (bigger(tmp, first)) {
-            strcpy(third, second);
-            strcpy(second, first);
-            strcpy(first, tmp);
-        } else if (bigger(tmp, second)) {
-            strcpy(third, second);
-            strcpy(second, tmp);
-        } else if (bigger(tmp, third)) {
-            strcpy(third, tmp);
-        }
-    }
-    puts(first);
-    puts(second);
-    puts(third);
+int main()
+{
+	scanf("%d", &n);
+	while (n--)
+	{
+		scanf("%s", tmp);
+		if (bigger(tmp, first))
+		{
+			strcpy(third, second);
+			strcpy(second, first);
+			strcpy(first, tmp);
+		}
+		else if (bigger(tmp, second))
+		{
+			strcpy(third, second);
+			strcpy(second, tmp);
+		}
+		else if (bigger(tmp, third))
+		{
+			strcpy(third, tmp);
+		}
+	}
+	puts(first);
+	puts(second);
+	puts(third);
 }
 ```
 
@@ -390,23 +417,30 @@ int main() {
 当圆盘数足够多时，三柱汉诺塔的移动次数会远远超出`unsigned long long`的范围，所以可以采用`pow`函数进行计算，转化为`double`数据类型进行比较，`double`的数据范围为$1.7*10(-308)～1.7*10(308)$,足够用来比较
 
 ```c
-#include <stdio.h>
+#include<stdio.h>
 #include<math.h>
-#define M 999999999
+
 int main(void)
 {
-	int i,n,j;
 	int min,x, f[310] = { 0,1,3 };
-   	for (i = 3; i <= 300; i++)
-    {
-        min = M;
-        for (x = 1; x < i; x++)
-            if (2 * f[x] + pow(2, i - x) - 1 < min)
-                min = 2 * f[x] + (int)pow(2, i - x) - 1;
-      	f[i] = min;
-  	}
-   	while(~scanf("%d", &n))
-    	printf("%d\n", f[n]);
+	int i;
+	for (i = 3; i <= 300; i++)
+	{
+		min = 999999999;
+		for (x = 1; x < i; x++)
+		{
+			if (2 * f[x] + pow(2, i - x) - 1 < min)
+			{
+				min = 2 * f[x] + (int)pow(2, i - x) - 1;
+			}
+		}
+		f[i] = min;
+	}
+	int n;
+	while(~scanf("%d", &n))
+	{
+		printf("%d\n", f[n]);
+	}
 	return 0;
 }
 ```
@@ -744,76 +778,99 @@ int main()
 ```c
 #include<stdio.h>
 
-int Parenthesis() {
-    char c = getchar();
-    if (c == ')' || c == ']' || c == '}' || c == EOF) {
-        ungetc(c, stdin);//与getchar相反，向读入中退回一个字符
-        return 1;
-    } else if (c == '(') {
-        int temp = Parenthesis();
-        if (temp == 0)//调用匹配失败
-        {
-            return 0;
-        }
-        c = getchar();
-        if (c != ')') {
-            return 0;
-        }
-        temp = Parenthesis();
-        if (temp == 0) {
-            return 0;
-        }
-        return 1;
-    } else if (c == '[') {
-        int temp = Parenthesis();
-        if (temp == 0) {
-            return 0;
-        }
-        c = getchar();
-        if (c != ']') {
-            return 0;
-        }
-        temp = Parenthesis();
-        if (temp == 0) {
-            return 0;
-        }
-        return 1;
-    } else if (c == '{') {
-        int temp = Parenthesis();
-        if (temp == 0) {
-            return 0;
-        }
-        c = getchar();
-        if (c != '}') {
-            return 0;
-        }
-        temp = Parenthesis();
-        if (temp == 0) {
-            return 0;
-        }
-        return 1;
-    }
+int Parenthesis()
+{
+	char c=getchar();
+	if(c==')'||c==']'||c=='}'||c==EOF)
+	{
+		ungetc(c,stdin);//与getchar相反，向读入中退回一个字符
+		return 1;
+	}
+	else if(c=='(')
+	{
+		int temp=Parenthesis();
+		if(temp==0)//调用匹配失败
+		{
+			return 0;
+		}
+		c=getchar();
+		if(c!=')')
+		{
+			return 0;
+		}
+		temp=Parenthesis();
+		if(temp==0)
+		{
+			return 0;
+		}
+		return 1;
+	}
+	else if(c=='[')
+	{
+		int temp=Parenthesis();
+		if(temp==0)
+		{
+			return 0;
+		}
+		c=getchar();
+		if(c!=']')
+		{
+			return 0;
+		}
+		temp=Parenthesis();
+		if(temp==0)
+		{
+			return 0;
+		}
+		return 1;
+	}
+	else if(c=='{')
+	{
+		int temp=Parenthesis();
+		if(temp==0)
+		{
+			return 0;
+		}
+		c=getchar();
+		if(c!='}')
+		{
+			return 0;
+		}
+		temp=Parenthesis();
+		if(temp==0)
+		{
+			return 0;
+		}
+		return 1;
+	}
 }
 
-int Matching() {
-    int ans = Parenthesis();//括号匹配
-    if (ans == 0) {
-        return 0;
-    }
-    char c = getchar();//匹配完应该读完
-    if (c != EOF) {
-        return 0;
-    }
-    return 1;
+int Matching()
+{
+	int ans=Parenthesis();//括号匹配
+	if(ans==0)
+	{
+		return 0;
+	}
+	char c=getchar();//匹配完应该读完
+	if(c!=EOF)
+	{
+		return 0;
+	}
+	return 1;
 }
 
-int main() {
-    int ans = Matching();
-    if (ans == 1) {
-        printf("AC\n");
-    } else {
-        printf("CE\n");
-    }
+int main()
+{
+	int ans=Matching();
+	if(ans==1)
+	{
+		printf("AC\n");
+	}
+	else
+	{
+		printf("CE\n");
+	}
 }
 ```
 
