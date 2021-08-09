@@ -90,6 +90,85 @@ int main(void) {
     return 0;
 }
 ```
+### 示例代码
+
+```c
+#include<stdio.h>
+int arr[501]={0};
+void print(int x)
+{
+    int i,j;
+    if(x%2==0)
+    {
+        for(i=0;i<x/2;i++)
+        {
+            for(j=0;j<i;j++) printf(" ");
+            printf("\\");
+            for(j=i+1;j<x/2;j++) printf(" ");
+            for(j=i+1;j<x/2;j++) printf(" ");
+            printf("/");
+            for(j=0;j<i;j++) printf(" ");
+            printf("\n");
+        }
+        for(i=x/2-1;i>=0;i--)
+        {
+            for(j=0;j<i;j++) printf(" ");
+            printf("/");
+            for(j=i+1;j<x/2;j++) printf(" ");
+            for(j=i+1;j<x/2;j++) printf(" ");
+            printf("\\");
+            for(j=0;j<i;j++) printf(" ");
+            printf("\n");
+        }
+    }
+    else
+    {
+        for(i=0;i<x/2;i++)
+        {
+            for(j=0;j<i;j++) printf(" ");
+            printf("\\");
+            for(j=i+1;j<x/2;j++) printf(" ");
+            printf(" ");
+            for(j=i+1;j<x/2;j++) printf(" ");
+            printf("/");
+            for(j=0;j<i;j++) printf(" ");
+            printf("\n");
+        }
+        for(j=0;j<i;j++) printf(" ");
+        printf("x\n");
+        for(i=x/2-1;i>=0;i--)
+        {
+            for(j=0;j<i;j++) printf(" ");
+            printf("/");
+            for(j=i+1;j<x/2;j++) printf(" ");
+            printf(" ");
+            for(j=i+1;j<x/2;j++) printf(" ");
+            printf("\\");
+            for(j=0;j<i;j++) printf(" ");
+            printf("\n");
+        }
+    }
+}
+
+int main()
+{
+    int n,i,j;
+    while(scanf("%d", &n)!=EOF)
+    {
+        arr[n]++;
+    }
+    for(i=500;i>=1;i--)
+    {
+        for(j=0;j<arr[i];j++)
+        {
+            print(i);
+            printf("\n");
+        }
+    }
+    return 0;
+}
+
+```
 ## `C` 4379 解谜小游戏
 
 ### 题目分析
