@@ -90,7 +90,7 @@ int main(void) {
     return 0;
 }
 ```
-### 示例代码
+### 示例代码2
 
 ```c
 #include<stdio.h>
