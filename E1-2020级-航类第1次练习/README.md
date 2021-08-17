@@ -169,6 +169,7 @@ int main()
 ```C
 
 #include<stdio.h>
+#include<limits.h>
 
 int main()
 {
@@ -184,7 +185,7 @@ int main()
 			unsigned long long sum=2*a;
 			printf("%llu00\n",sum);
 		}
-		else if(a==-9223372036854775808)
+		else if(a==LLONG_MIN)
 		{
 			printf("-1844674407370955161600\n");
 		}
