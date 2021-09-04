@@ -164,6 +164,16 @@ int main() {
 #### 部分示例代码
 
 ```c
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+
+struct node
+{
+    int data;
+    struct node *next;
+};
+
 /*
  * 函数作用:  找到head指向的链表的最后一个节点，并返回指向它的指针
  *
@@ -172,13 +182,17 @@ int main() {
  *
  * 返回值:    指向链表尾节点的指针。若链表为空，则返回NULL.
  */
-Node *find_tail_of_link_list(Node *head)
+struct node *find_tail_of_link_list(struct node *head)
 {
-    if (head == NULL) {
+    if (head == NULL)
+    {
         return NULL;
-    } else {
-        Node *tail = head;
-        while (tail->next) {
+    }
+    else
+    {
+        struct node *tail = head;
+        while (tail->next)
+        {
             tail = tail->next;
         }
         return tail;
@@ -196,18 +210,91 @@ Node *find_tail_of_link_list(Node *head)
  *
  * 返回值:       指向链表头节点的指针.
  */
-Node *add_node_to_link_list(Node *head, Node *new_node, int data)
+struct node *add_node_to_link_list(struct node *head, struct node *new_node, int data)
 {
     new_node->data = data;
     new_node->next = NULL;
-    Node *tail = find_tail_of_link_list(head);
-    if (tail == NULL) {
+    struct node *tail = find_tail_of_link_list(head);
+    if (tail == NULL)
+    {
         return new_node;
-    } else {
+    }
+    else
+    {
         tail->next = new_node;
         return head;
     }
 }
+
+char buffer[64];
+
+void output(struct node *head, struct node *tail)
+{
+    if (head == NULL)
+    {
+        printf("The link list is empty.\n");
+        return;
+    }
+    struct node *n = head;
+    putchar('\n');
+    while (1)
+    {
+        sprintf(buffer, "%d", n->data);
+        int len = (int) strlen(buffer);
+        putchar('+');
+        for (int i = 0; i < len; i++)
+        {
+            putchar('-');
+        }
+        printf(n == tail ? "+-+\n|%d|\\|" : "+----+\n|%d|next|", n->data);
+        if (n == head)
+        {
+            printf(" <----head");
+        }
+        if (n == tail)
+        {
+            printf(" <----tail");
+        }
+        printf("\n+");
+        for (int i = 0; i < len; i++)
+        {
+            putchar('-');
+        }
+        printf(n == tail ? "+-+\n " : "+-|--+\n ");
+        if (n != tail)
+        {
+            for (int i = 0; i < len + 2; i++)
+            {
+                putchar('_');
+            }
+            printf("|\n |\n V\n");
+        }
+        if (n->next == NULL)
+        {
+            break;
+        }
+        n = n->next;
+    }
+    putchar('\n');
+}
+
+int main()
+{
+    int n;
+    scanf("%d", &n);
+    struct node *head = NULL, *tail;
+    while (n--)
+    {
+        int data;
+        scanf("%d", &data);
+        struct node *new_node = (struct node *) malloc(sizeof(struct node));
+        head = add_node_to_link_list(head, new_node, data);
+    }
+    tail = find_tail_of_link_list(head);
+    output(head, tail);
+    return 0;
+}
+
 ```
 
 
